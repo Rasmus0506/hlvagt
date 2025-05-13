@@ -4,6 +4,14 @@ import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 
+import org.bukkit.Statistic;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
+import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,8 +19,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class VagtLevelAdminCommands implements CommandExecutor {
-    private PlayerProfiles playerProfiles;
-
+    private final PlayerProfiles playerProfiles;
 
     public VagtLevelAdminCommands(PlayerProfiles playerProfiles) {
         this.playerProfiles = playerProfiles;
@@ -20,203 +27,240 @@ public class VagtLevelAdminCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
-
-        if(!sender.hasPermission("Vagt.Admin")) {
+        if (!sender.hasPermission("Vagt.Admin")) {
             sender.sendMessage("§4Du har ikke tilladelse til at bruge denne kommando");
             return true;
         }
-        if(alias.equalsIgnoreCase("vaddexp")) {
-            addExp(args, (Player) sender);
-            return true;
-        } else if(alias.equalsIgnoreCase("vaddlevel")) {
-            addlevel(args, (Player) sender);
-            return true;
-        }
-        if(!(sender instanceof Player)) {
-            System.out.println("kun spillere kan bruge denne command");
-            return true;
-        }
-        Player p = (Player) sender;
-        boolean reseta = false;
-        if(alias.equalsIgnoreCase("vlevel")) {
-            setLevel(args, p);
-            return true;
-        } else if (alias.equalsIgnoreCase("vexp")) {
-            setExp(args, p);
-            return true;
-        } else if (alias.equalsIgnoreCase("vreset")) {
-            reset(args, p);
-            return true;
-        } else if(alias.equalsIgnoreCase("showstats")) {
-            if(args.length == 0) {
-                p.sendMessage("§4Brug /showstats <spiller>");
-                return true;
-            }
-            Player target = getPlayer(args, p);
-            if (target == null) return true;
-            if(!target.hasPermission("vagt")) {
-                p.sendMessage("§4Spilleren er ikke vagt");
-                return true;
-            }
-            PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
 
-
-            return true;
-        } else if(alias.equalsIgnoreCase("vbufflevel")) {
-            if(args.length == 0 || args.length == 1) {
-                p.sendMessage("§4Brug /vbufflevel <spiller> <level>");
-                return true;
-            }
-            Player target = getPlayer(args, p);
-            if (target == null) return true;
-            int level = Integer.parseInt(args[1]);
-            PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
-            profile.setProperty("buff", level);
-            p.sendMessage("§aDu har sat " + target.getName() + " til buff level " + level);
-            try {
-                playerProfiles.save(profile);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        if (!(sender instanceof Player)) {
+            System.out.println("Kun spillere kan bruge denne command");
             return true;
         }
 
-        if(!p.hasPermission("Vagt.HAdmin")) {
-            p.sendMessage("§4Du har ikke tilladelse til at bruge denne kommando");
-            return true;
-        }
-        if (alias.equalsIgnoreCase("vconfirmresetall")) {
-            reseta = true;
+        Player player = (Player) sender;
+
+        switch (alias.toLowerCase()) {
+            case "vaddexp":
+                handleAddExp(args, player);
+                break;
+            case "vaddlevel":
+                handleAddLevel(args, player);
+                break;
+            case "vlevel":
+                handleSetLevel(args, player);
+                break;
+            case "vexp":
+                handleSetExp(args, player);
+                break;
+            case "vreset":
+                handleReset(args, player);
+                break;
+            case "showstats":
+                handleShowStats(args, player);
+                break;
+            case "vbufflevel":
+                handleBuffLevel(args, player);
+                break;
+            case "vconfirmresetall":
+                handleConfirmResetAll(player);
+                break;
+            case "vsetvagtpost":
+                handleVagtPost(args, player);
+                break;
+            case "vsetplaytime":
+                handleSetPlayTime(args, player);
+                break;
+            default:
+                player.sendMessage("§4Ugyldig kommando");
+
 
         }
-        if(!reseta) {
-            p.sendMessage("§4-------RESET ALL-------");
-            p.sendMessage("§4§lER DU SIKKER PÅ AT DU VIL NULSTILLE ALLE SPILLERES LEVEL OG EXP?");
-            p.sendMessage("§4§lSKRIV /vconfirmresetall FOR AT BEKRÆFTE");
-            p.sendMessage("§4-----------------------");
-        }
-        if(reseta) {
-            confirmResetAll(p);
-        }
-
-
 
         return true;
     }
 
-    public void addlevel(String[] args, Player p) {
-        if(args.length == 0 || args.length == 1) {
-            p.sendMessage("§4Brug /vlevel <spiller> <level>");
+    private void handleSetPlayTime(String[] args, Player player) {
+        if (args.length < 2) {
+            player.sendMessage("§4Brug /vsetplaytime <spiller> <tid>");
             return;
         }
-        Player target = getPlayer(args, p);
-        if (target == null) return;
-        double level = Double.parseDouble(args[1]);
-        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
-        int currentLevel = profile.castPropertyToInt(profile.getProperty("level"));
-        profile.setProperty("level", currentLevel + level);
-        p.sendMessage("§aDu har givet " + target.getName() + " extra level " + level);
-        try {
-            playerProfiles.save(profile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return;
-    }
-    private void confirmResetAll(Player p) {
-        playerProfiles.getProfileMap().values().forEach(profile -> {
-            profile.setProperty("level",1);
-            profile.setXp(0);
 
-        });
-        playerProfiles.saveAll();
-        p.sendMessage("§aYou have reset all players' level and exp.");
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        int time = parseInt(args[1], player, "§4Ugyldig tid");
+        if (time == -1) return;
+        time = time * 20 * 60; // Convert to ticks
+        player.setStatistic(Statistic.PLAY_ONE_TICK, time);
+
     }
-    private void reset(String[] args, Player p) {
-        if(args.length == 0) {
-            p.sendMessage("§4Brug /vreset <spiller>");
+    private void handleVagtPost(String[] args, Player player) {
+        if (args.length < 1) {
+            player.sendMessage("§4Brug /vsetvagtpost <spiller>");
             return;
         }
-        Player target = getPlayer(args, p);
+
+        Player target = getPlayer(args[0], player);
         if (target == null) return;
+
         PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
-        profile.setProperty("level",1);
-        profile.setXp(0);
-        p.sendMessage("§aDu har nulstillet " + target.getName() + "'s level og exp");
-        try {
-            playerProfiles.save(profile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return;
-    }
-    private void setExp(String[] args, Player p) {
-        if(args.length == 0 || args.length == 1) {
-            p.sendMessage("§4Brug /vexp <spiller> <exp>");
-            return;
-        }
-        Player target = getPlayer(args, p);
-        if (target == null) return;
-        int exp = Integer.parseInt(args[1]);
-        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
-        profile.setXp(exp);
-        p.sendMessage("§aDu har sat " + target.getName() + " til " + exp + " exp");
-        try {
-            playerProfiles.save(profile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return;
-    }
-    public void addExp(String[] args, Player p) {
-        if(args.length == 0 || args.length == 1) {
-            p.sendMessage("§4Brug /vexp <spiller> <exp>");
-            return;
-        }
-        Player target = getPlayer(args, p);
-        if (target == null) return;
-        int exp = Integer.parseInt(args[1]);
-        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
-        int currentExp = profile.castPropertyToInt(profile.getProperty("exp"));
-        profile.setXp(currentExp + exp);
-        p.sendMessage("§aDu har tilføjet " + target.getName() + " " + exp + "extra exp");
-        try {
-            playerProfiles.save(profile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return;
+        int amount = Integer.parseInt(args[1]);
+        profile.setProperty("vagtposter", amount);
+        saveProfile(profile, player, "§aDu har sat " + target.getName() + " til at have taget " + args[1] + " vagtposter");
     }
 
-    private void setLevel(String[] args, Player p) {
-        if(args.length == 0 || args.length == 1) {
-            p.sendMessage("§4Brug /vlevel <spiller> <level>");
+    private void handleAddExp(String[] args, Player player) {
+        if (args.length < 2) {
+            player.sendMessage("§4Brug /vexp <spiller> <exp>");
             return;
         }
-        Player target = getPlayer(args, p);
+
+        Player target = getPlayer(args[0], player);
         if (target == null) return;
-        int level = Integer.parseInt(args[1]);
+
+        int exp = parseInt(args[1], player, "§4Ugyldigt exp-tal");
+        if (exp == -1) return;
+
+        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
+        profile.setXp(profile.castPropertyToInt(profile.getProperty("exp")) + exp);
+        saveProfile(profile, player, "§aDu har tilføjet " + target.getName() + " " + exp + " ekstra exp");
+    }
+
+    private void handleAddLevel(String[] args, Player player) {
+        if (args.length < 2) {
+            player.sendMessage("§4Brug /vlevel <spiller> <level>");
+            return;
+        }
+
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        int level = parseInt(args[1], player, "§4Ugyldigt level-tal");
+        if (level == -1) return;
+
+        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
+        profile.setProperty("level", profile.castPropertyToInt(profile.getProperty("level")) + level);
+        saveProfile(profile, player, "§aDu har givet " + target.getName() + " ekstra level " + level);
+    }
+
+    private void handleSetLevel(String[] args, Player player) {
+        if (args.length < 2) {
+            player.sendMessage("§4Brug /vlevel <spiller> <level>");
+            return;
+        }
+
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        int level = parseInt(args[1], player, "§4Ugyldigt level-tal");
+        if (level == -1) return;
+
         PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
         profile.setProperty("level", level);
-        p.sendMessage("§aDu har sat " + target.getName() + " til level " + level);
-        try {
-            playerProfiles.save(profile);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        saveProfile(profile, player, "§aDu har sat " + target.getName() + " til level " + level);
+    }
+
+    private void handleSetExp(String[] args, Player player) {
+        if (args.length < 2) {
+            player.sendMessage("§4Brug /vexp <spiller> <exp>");
+            return;
         }
-        return;
+
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        int exp = parseInt(args[1], player, "§4Ugyldigt exp-tal");
+        if (exp == -1) return;
+
+        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
+        profile.setXp(exp);
+        saveProfile(profile, player, "§aDu har sat " + target.getName() + " til " + exp + " exp");
+    }
+
+    private void handleReset(String[] args, Player player) {
+        if (args.length < 1) {
+            player.sendMessage("§4Brug /vreset <spiller>");
+            return;
+        }
+
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
+        profile.setProperty("level", 1);
+        profile.setXp(0);
+        saveProfile(profile, player, "§aDu har nulstillet " + target.getName() + "'s level og exp");
+    }
+
+    private void handleShowStats(String[] args, Player player) {
+        if (args.length < 1) {
+            player.sendMessage("§4Brug /showstats <spiller>");
+            return;
+        }
+
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        if (!target.hasPermission("vagt")) {
+            player.sendMessage("§4Spilleren er ikke vagt");
+            return;
+        }
+
+        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
+        // Add logic to display stats here
+    }
+
+    private void handleBuffLevel(String[] args, Player player) {
+        if (args.length < 2) {
+            player.sendMessage("§4Brug /vbufflevel <spiller> <level>");
+            return;
+        }
+
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        int level = parseInt(args[1], player, "§4Ugyldigt buff level");
+        if (level == -1) return;
+
+        PlayerProfile profile = playerProfiles.getPlayerProfile(target.getUniqueId());
+        profile.setProperty("buff", level);
+        saveProfile(profile, player, "§aDu har sat " + target.getName() + " til buff level " + level);
+    }
+
+    private void handleConfirmResetAll(Player player) {
+        playerProfiles.getProfileMap().values().forEach(profile -> {
+            profile.setProperty("level", 1);
+            profile.setXp(0);
+        });
+        playerProfiles.saveAll();
+        player.sendMessage("§aDu har nulstillet alle spilleres level og exp.");
     }
 
     @Nullable
-    private Player getPlayer(String[] args, Player p) {
-        Player target = p.getServer().getPlayer(args[0]);
-        if(target == null) {
-            target = p.getServer().getOfflinePlayer(args[0]).getPlayer();
-            if (target == null) {
-                p.sendMessage("§4Spilleren findes ikke");
-                return null;
-            }
+    private Player getPlayer(String name, Player player) {
+        Player target = player.getServer().getPlayer(name);
+        if (target == null) {
+            player.sendMessage("§4Spilleren findes ikke");
         }
         return target;
+    }
+
+    private int parseInt(String value, Player player, String errorMessage) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            player.sendMessage(errorMessage);
+            return -1;
+        }
+    }
+
+    private void saveProfile(PlayerProfile profile, Player player, String successMessage) {
+        try {
+            playerProfiles.save(profile);
+            player.sendMessage(successMessage);
+        } catch (Exception e) {
+            player.sendMessage("§4Kunne ikke gemme spillerens profil");
+            e.printStackTrace();
+        }
     }
 }

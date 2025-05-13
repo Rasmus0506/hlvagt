@@ -24,7 +24,6 @@ public class VagtWarpGUI implements Listener {
     private final int WARP_B_INDEX = 13;
     private final int WARP_A_INDEX = 15;
     private final int WARP_CVCELLESTUE_INDEX = 29;
-    private final int WARP_APLUS_INDEX = 25;
     private final int WARP_BVCELLESTUE_INDEX = 31;
     private final int WARP_AVAGTCELLER_INDEX = 33;
     private final ChangeInvOnWarp changeInvOnWarp;
@@ -39,15 +38,13 @@ public class VagtWarpGUI implements Listener {
         ItemStack warpC = createWarpItem(DyeColor.RED, "§c§lWarp C");
         ItemStack warpB = createWarpItem(DyeColor.BLUE, "§b§lWarp B");
         ItemStack warpA = createWarpItem(DyeColor.GREEN, "§a§lWarp A");
-        ItemStack warpaplus = createWarpItem(DyeColor.LIME,"§a§lWarp A+");
         ItemStack warpAvagtceller = createWarpItem(DyeColor.GREEN, "§a§lWarp A Vagt Celler");
-        ItemStack warpBvcellestue = createWarpItem(DyeColor.BLUE, "§b§lWarp B Vagt Celler");
+        ItemStack warpBvcellestue = createWarpItem(DyeColor.BLUE, "§b§lWarp B Vand Celler");
         ItemStack warpCvcellestue = createWarpItem(DyeColor.RED, "§c§lWarp C Vagt Celler");
 
         inventory.setItem(WARP_C_INDEX, warpC);
         inventory.setItem(WARP_B_INDEX, warpB);
         inventory.setItem(WARP_A_INDEX, warpA);
-        inventory.setItem(WARP_APLUS_INDEX, warpaplus);
         inventory.setItem(WARP_AVAGTCELLER_INDEX, warpAvagtceller);
         inventory.setItem(WARP_BVCELLESTUE_INDEX, warpBvcellestue);
         inventory.setItem(WARP_CVCELLESTUE_INDEX, warpCvcellestue);
@@ -88,14 +85,11 @@ public class VagtWarpGUI implements Listener {
                 warpPlayer(p, "vagtc", "§7Du er warpet til §cC");
                 break;
             case WARP_CVCELLESTUE_INDEX:
-                warpPlayer(p, "C2", "§7Du er warpet til §cC Ekstra");
+                warpPlayer(p, "C2", "§7Du er warpet til §cC Vagt Celler");
                 break;
             case WARP_BVCELLESTUE_INDEX:
-                if (!p.hasPermission("vagtwarpb")) {
-                    warpPlayer(p, "bcellestue", "§7Du er warpet til §bB  vagt Celler");
-                    p.sendMessage("§cDu har ikke højt nok rank");
-                    break;
-                }
+                warpPlayer(p, "bcellestue", "§7Du er warpet til §bB Celle Stue");
+                break;
             case WARP_B_INDEX:
                 if (!p.hasPermission("vagtwarpb")) {
                     p.sendMessage("§cDu har ikke højt nok rank");
@@ -109,13 +103,6 @@ public class VagtWarpGUI implements Listener {
                     return;
                 }
                 warpPlayer(p, "a", "§7Du er warpet til §aA");
-                break;
-            case WARP_APLUS_INDEX:
-                if (!p.hasPermission("vagtwarpaplus")) {
-                    p.sendMessage("§cDu har ikke højt nok Vagt Level (25)");
-                    return;
-                }
-                warpPlayer(p, "plusa", "§7Du er warpet til §aA+");
                 break;
             case WARP_AVAGTCELLER_INDEX:
                 if (!p.hasPermission("vagtwarpa")) {

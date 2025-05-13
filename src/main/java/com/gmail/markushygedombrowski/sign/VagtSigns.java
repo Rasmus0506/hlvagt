@@ -2,7 +2,6 @@ package com.gmail.markushygedombrowski.sign;
 
 import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.buff.BuffGui;
-import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
 import com.gmail.markushygedombrowski.inventory.ChangeInvOnWarp;
 import com.gmail.markushygedombrowski.inventory.InvHolder;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
@@ -10,6 +9,7 @@ import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import com.gmail.markushygedombrowski.settings.Settings;
 import com.gmail.markushygedombrowski.utils.Logger;
 import com.gmail.markushygedombrowski.utils.VagtUtils;
+import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
 import com.gmail.markushygedombrowski.warp.VagtSpawnInfo;
 import com.gmail.markushygedombrowski.warp.VagtSpawnManager;
 import org.bukkit.Bukkit;
@@ -51,10 +51,9 @@ public class VagtSigns implements Listener {
         this.playerProfiles = playerProfiles;
         this.changeInvOnWarp = changeInvOnWarp;
     }
-
     public int castPropertyToInt(Object key) {
         if (key instanceof Double) {
-            return (((Double) key).intValue());
+            return  (((Double) key).intValue());
         }
         return (int) key;
     }
@@ -151,10 +150,6 @@ public class VagtSigns implements Listener {
                         itemStack.addEnchantment(Enchantment.DURABILITY, 3); // Unbreaking 3
                         itemStack.addEnchantment(Enchantment.DIG_SPEED, 1); // Efficiency 1
                     }
-                    if (playerLevel >= 50) {
-                        itemStack.addEnchantment(Enchantment.DURABILITY, 3); // Unbreaking 3
-                        itemStack.addEnchantment(Enchantment.DIG_SPEED, 2); // Efficiency 2
-                    }
                     ItemMeta itemMeta = itemStack.getItemMeta();
                     itemMeta.setDisplayName("§cGratis pickaxe!");
                     itemStack.setItemMeta(itemMeta);
@@ -177,7 +172,6 @@ public class VagtSigns implements Listener {
         }
     }
 
-
     private boolean healSign(Sign sign, Player p) {
         if (sign.getLine(0).equalsIgnoreCase("§8===============") && sign.getLine(1).equalsIgnoreCase("§cKlik for") && sign.getLine(2).equalsIgnoreCase("§4Heal") && sign.getLine(3).equalsIgnoreCase("§8===============")) {
             if (VagtUtils.notHasPermission(p, "vagtbuff")) return true;
@@ -192,4 +186,3 @@ public class VagtSigns implements Listener {
         return false;
     }
 }
-

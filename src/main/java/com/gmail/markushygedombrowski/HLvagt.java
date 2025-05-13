@@ -1,5 +1,6 @@
 package com.gmail.markushygedombrowski;
 
+import com.gmail.markushygedombrowski.abilities.GlowNearbyPlayers;
 import com.gmail.markushygedombrowski.buff.AktivBuffCmd;
 import com.gmail.markushygedombrowski.buff.BuffGui;
 import com.gmail.markushygedombrowski.buff.BuffManager;
@@ -117,6 +118,9 @@ public class HLvagt extends JavaPlugin {
         RegionEnterlistener regionEnterlistener = new RegionEnterlistener(logger, panikRumManager);
         Bukkit.getPluginManager().registerEvents(regionEnterlistener, this);
 
+        GlowNearbyPlayers glowNearbyPlayers = new GlowNearbyPlayers(playerProfiles, this);
+        // glowNearbyPlayers.startGlowingTask();
+
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 
             @Override
@@ -130,6 +134,7 @@ public class HLvagt extends JavaPlugin {
                 regionEnterlistener.panikrumTimer();
             }
         }, 0, 20);
+
 
 
 

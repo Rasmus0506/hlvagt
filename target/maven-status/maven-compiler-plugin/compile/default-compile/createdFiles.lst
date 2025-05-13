@@ -2,6 +2,7 @@ com\gmail\markushygedombrowski\rankup\RankupKrav.class
 com\gmail\markushygedombrowski\vagtMenu\subMenu\RankupGUI.class
 com\gmail\markushygedombrowski\warp\VagtSpawnInfo.class
 com\gmail\markushygedombrowski\listners\DamageListener.class
+com\gmail\markushygedombrowski\abilities\GlowNearbyPlayers$1.class
 com\gmail\markushygedombrowski\sign\VagtSigns.class
 com\gmail\markushygedombrowski\warp\VagtWarpGUI.class
 com\gmail\markushygedombrowski\cooldown\VagtAbilityCooldown.class
@@ -40,6 +41,7 @@ com\gmail\markushygedombrowski\sign\RepairGUI.class
 com\gmail\markushygedombrowski\warp\Warpsign.class
 com\gmail\markushygedombrowski\vagtMenu\MainMenu.class
 com\gmail\markushygedombrowski\npc\vagthavende\DeliverGearGUI.class
+com\gmail\markushygedombrowski\abilities\GlowNearbyPlayers.class
 com\gmail\markushygedombrowski\vagtMenu\subMenu\StatsGUI.class
 com\gmail\markushygedombrowski\vagtMenu\subMenu\VagtLevelGUI.class
 com\gmail\markushygedombrowski\vagtMenu\subMenu\Lon.class

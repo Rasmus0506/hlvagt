@@ -38,7 +38,7 @@ public class BuffGui implements Listener {
 
     public void create(Player p) {
         Inventory inventory = Bukkit.createInventory(null, 9, "§c§lBuff");
-        int pay = 1500;
+        int pay = 5000;
         ItemStack buff = new ItemStack(Material.POTION,1,(short) 1);
         List<String> lore = new ArrayList<>();
         lore.add(0, "§7Koster: §b" + pay);
