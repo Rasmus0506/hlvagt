@@ -1,0 +1,54 @@
+buff:
+  buffLength: 200000000
+  buffamplifer:
+    speed: 2
+    strengh: 0
+    absorption: 2
+    pay: 5000
+vagt:
+  lonp: 1000
+  lonc: 4000
+  lonb: 8000
+  lona: 10000
+  lonoffi: 13000
+  lonvicins: 18000
+  lonins: 20000
+  londire: 25000
+  lontime: 60
+  vagthead: "50524"
+  vagtheaddrop: 0
+
+
+deliveritemsexp:
+  iron:
+    ironhelmet:
+    ironchestplate:
+    ironleggings:
+    ironboots:
+    ironsword:
+  diamond:
+    diamondhelmet:
+    diamondchestplate:
+    diamondleggings:
+    diamondboots:
+    diamondsword:
+
+
+warps:
+  1:
+    name: "defaultwarp"
+    location:
+      x: 50
+      y: 100
+      z: 20
+      world: "world"
+
+
+vagter:
+  1:
+    uuid: "0ea61ef8-45e7-42b4-b775-5ac2b01ebb3d"
+    name: markus6890
+    pv: 1
+    lvl: 1
+    løn: 25000
+    deaths: 0

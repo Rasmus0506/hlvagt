@@ -1,0 +1,30 @@
+main: com.gmail.markushygedombrowski.HLvagt
+name: HLvagt
+version: "1.0"
+depend:  [Vault,WorldGuard,WorldEdit,HeadDatabase,Combat,HLUtils,Citizens,VagtProfiler,WGRegionEvents]
+commands:
+  vagtspawn:
+    aliases: ["setvagtspawn", "resetvagtspawn"]
+    description: "vagtspawn system"
+  vagt:
+    description: "vagt"
+  ansat:
+    description: "ansæt vagter"
+  vc:
+    description: "vagt chat"
+  drop:
+    description: "må droppe"
+  fyr:
+    description: "fyr vagter"
+  aktivbuff:
+    aliases: ["buff"]
+    description: "vagt buff aktiv"
+  guitest:
+    description: "test gui"
+  vresetall:
+    aliases: ["vconfirmresetall", "vreset", "vsetexp", "vsetlevel","vbufflevel","vaddexp","vaddlevel"]
+    description: "resetter alle vagter"
+  panikrum:
+    description: "panikrum"
+  buffreload:
+    description: "reload buff"
