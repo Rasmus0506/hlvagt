@@ -66,8 +66,8 @@ public class VagtSigns implements Listener {
                 Sign sign = (Sign) event.getClickedBlock().getState();
                 if (sign.getLine(0).equalsIgnoreCase("§8===============") && sign.getLine(1).equalsIgnoreCase("§cKøb dig ud") && sign.getLine(2).equalsIgnoreCase("§cFor §764 §cCobble") && sign.getLine(3).equalsIgnoreCase("§8===============")) {
                     ArrayList<ItemStack> items = new ArrayList<>();
-                    items.add(new ItemStack(Material.COBBLESTONE, 64));
-                    items.add(new ItemStack(Material.STONE, 64));
+                    items.add(new ItemStack(Material.COBBLESTONE, 92));
+                    items.add(new ItemStack(Material.STONE, 92));
 
 
                     String rank;
