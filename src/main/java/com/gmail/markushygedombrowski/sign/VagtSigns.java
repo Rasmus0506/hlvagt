@@ -150,6 +150,10 @@ public class VagtSigns implements Listener {
                         itemStack.addEnchantment(Enchantment.DURABILITY, 3); // Unbreaking 3
                         itemStack.addEnchantment(Enchantment.DIG_SPEED, 1); // Efficiency 1
                     }
+                    if (playerLevel >= 60) {
+                        itemStack.addEnchantment(Enchantment.DURABILITY, 3); // Unbreaking 3
+                        itemStack.addEnchantment(Enchantment.DIG_SPEED, 2); // Efficiency 2
+                    }
                     ItemMeta itemMeta = itemStack.getItemMeta();
                     itemMeta.setDisplayName("§cGratis pickaxe!");
                     itemStack.setItemMeta(itemMeta);

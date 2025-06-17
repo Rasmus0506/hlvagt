@@ -141,7 +141,7 @@ public class RepairGUI implements Listener {
                         p.sendMessage("§cDu har ikke nok penge!");
 
                     } else {
-                        int duraadd = 50;
+                        int duraadd = 70;
                         short dura = (short) (itemDura.getDurability() - duraadd);
                         itemDura.setDurability(dura);
                         plugin.econ.withdrawPlayer(p, durabilityprice);

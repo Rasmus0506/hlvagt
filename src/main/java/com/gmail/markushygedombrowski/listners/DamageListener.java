@@ -262,16 +262,19 @@ public class DamageListener implements Listener {
     public void onArmorDamage(PlayerItemDamageEvent event) {
         if (event.getItem() == null) return;
         ItemStack item = event.getItem();
-        ItemMeta itemMeta = item.getItemMeta();
-        if (itemMeta.getDisplayName() == null) {
-            return;
-        }
-        if (itemMeta.getDisplayName().contains("§aA") || itemMeta.getDisplayName().contains("§bB") || itemMeta.getDisplayName().contains("§cC")) {
-            int dura = 1;
-            event.setDamage(dura);
-        }
 
+        // Tjekker om det er armor/gear ved at se på material typen
+        String materialName = item.getType().name();
+        if (materialName.endsWith("_HELMET") ||
+                materialName.endsWith("_CHESTPLATE") ||
+                materialName.endsWith("_LEGGINGS") ||
+                materialName.endsWith("_BOOTS")) {
+
+            event.setDamage(1);
+        }
     }
+
+
 
 
 }
