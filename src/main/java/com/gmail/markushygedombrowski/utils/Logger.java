@@ -71,4 +71,8 @@ public class Logger {
         String finalMessage = date + " - "+ name + ": " + msg + "\n";
         addMessage(finalMessage,fileName);
     }
+
+    public void notify(String achievements, String s) {
+
+    }
 }

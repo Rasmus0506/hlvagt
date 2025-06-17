@@ -14,6 +14,7 @@ import com.gmail.markushygedombrowski.npc.VagtNPCer;
 import com.gmail.markushygedombrowski.npc.vagthavende.DeliverGearGUI;
 import com.gmail.markushygedombrowski.npc.vagthavende.VagthavendeOfficer;
 import com.gmail.markushygedombrowski.panikrum.PanikRumManager;
+import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import com.gmail.markushygedombrowski.rankup.RankupLoader;
 
@@ -39,9 +40,10 @@ import com.gmail.markushygedombrowski.warp.Warpsign;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.UUID;
 
 public class HLvagt extends JavaPlugin {
     public Economy econ = null;
@@ -60,8 +62,10 @@ public class HLvagt extends JavaPlugin {
     private ChangeInvOnWarp changeInvOnWarp;
     private LevelRewards levelRewards;
     private BuffManager buffManager;
+    private com.gmail.markushygedombrowski.achievements.VagtAchievements vagtAchievements;
+    private AchievementsGUI achievementsGUI;
 
-
+    @Override
     public void onEnable() {
         instance = this;
         vagtProfiler = VagtProfiler.getInstance();
@@ -119,7 +123,7 @@ public class HLvagt extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(regionEnterlistener, this);
 
         GlowNearbyPlayers glowNearbyPlayers = new GlowNearbyPlayers(playerProfiles, this);
-        // glowNearbyPlayers.startGlowingTask();
+       // glowNearbyPlayers.startGlowingTask();
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 
@@ -134,6 +138,9 @@ public class HLvagt extends JavaPlugin {
                 regionEnterlistener.panikrumTimer();
             }
         }, 0, 20);
+
+        vagtAchievements = new com.gmail.markushygedombrowski.achievements.VagtAchievements(this, playerProfiles, logger);
+        achievementsGUI = new AchievementsGUI(this);
 
 
 
@@ -266,8 +273,19 @@ public class HLvagt extends JavaPlugin {
         return instance;
     }
 
+    public com.gmail.markushygedombrowski.achievements.VagtAchievements getVagtAchievements() {
+        return vagtAchievements;
+    }
+
+    public AchievementsGUI getAchievementsGUI() {
+        return achievementsGUI;
+    }
 
     public void onDisable() {
 
+    }
+
+    public PlayerProfile getPlayerProfile(UUID uniqueId) {
+            return null;
     }
 }
