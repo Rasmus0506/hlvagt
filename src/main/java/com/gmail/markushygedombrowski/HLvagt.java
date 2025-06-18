@@ -83,13 +83,12 @@ public class HLvagt extends JavaPlugin {
         loadConfigManager();
 
 
-
         if (!setupEconomy()) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        if(Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+        if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPerms = Bukkit.getServicesManager().getRegistration(LuckPerms.class).getProvider();
         }
 
@@ -123,7 +122,7 @@ public class HLvagt extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(regionEnterlistener, this);
 
         GlowNearbyPlayers glowNearbyPlayers = new GlowNearbyPlayers(playerProfiles, this);
-       // glowNearbyPlayers.startGlowingTask();
+        // glowNearbyPlayers.startGlowingTask();
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 
@@ -143,10 +142,6 @@ public class HLvagt extends JavaPlugin {
         achievementsGUI = new AchievementsGUI(this);
 
 
-
-
-
-
     }
 
     public void reload() {
@@ -154,8 +149,6 @@ public class HLvagt extends JavaPlugin {
 
         loadConfigManager();
     }
-
-
 
 
     public void initWarps() {
@@ -171,7 +164,6 @@ public class HLvagt extends JavaPlugin {
 
 
     }
-
 
 
     public void loadConfigManager() {
@@ -199,7 +191,6 @@ public class HLvagt extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(pvgui, this);
 
 
-
         TopVagterGUI topVagterGUI = new TopVagterGUI();
         Bukkit.getPluginManager().registerEvents(topVagterGUI, this);
 
@@ -221,7 +212,7 @@ public class HLvagt extends JavaPlugin {
         VagtCommand vagtCommand = new VagtCommand(mainMenu, playerProfiles);
         getCommand("vagt").setExecutor(vagtCommand);
 
-        Rankupcommand rankupcommand = new Rankupcommand(settings, playerProfiles, vagtSpawnManager,this);
+        Rankupcommand rankupcommand = new Rankupcommand(settings, playerProfiles, vagtSpawnManager, this);
         getCommand("ansat").setExecutor(rankupcommand);
 
         VagtChat vagtChat = new VagtChat();
@@ -240,17 +231,17 @@ public class HLvagt extends JavaPlugin {
         lon = new Lon(this, playerProfiles, settings);
 
 
-        BuffGui buffGui = new BuffGui(settings, this,playerProfiles, buffManager);
+        BuffGui buffGui = new BuffGui(settings, this, playerProfiles, buffManager);
         Bukkit.getPluginManager().registerEvents(buffGui, this);
         VagtSigns vagtSigns = new VagtSigns(vagtSpawnManager, settings, this, repairGUI, buffGui, logger, playerProfiles, changeInvOnWarp);
         Bukkit.getPluginManager().registerEvents(vagtSigns, this);
 
-        AktivBuffCmd aktivBuffCmd = new AktivBuffCmd(settings,buffManager);
+        AktivBuffCmd aktivBuffCmd = new AktivBuffCmd(settings, buffManager);
         getCommand("aktivbuff").setExecutor(aktivBuffCmd);
     }
 
     public void initListener() {
-        OnJoin onJoin = new OnJoin(playerProfiles, settings,levelRewards);
+        OnJoin onJoin = new OnJoin(playerProfiles, settings, levelRewards);
         Bukkit.getPluginManager().registerEvents(onJoin, this);
 
         DamageListener damageListener = new DamageListener(settings, vagtSpawnManager, playerProfiles, this, combatList, vagtFangePvpConfigManager, logger, luckPerms, changeInvOnWarp);
@@ -286,6 +277,6 @@ public class HLvagt extends JavaPlugin {
     }
 
     public PlayerProfile getPlayerProfile(UUID uniqueId) {
-            return null;
+        return null;
     }
 }

@@ -4,10 +4,7 @@ import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
-import com.gmail.markushygedombrowski.vagtMenu.subMenu.PVGUI;
-import com.gmail.markushygedombrowski.vagtMenu.subMenu.RankupGUI;
-import com.gmail.markushygedombrowski.vagtMenu.subMenu.StatsGUI;
-import com.gmail.markushygedombrowski.vagtMenu.subMenu.VagtLevelGUI;
+import com.gmail.markushygedombrowski.vagtMenu.subMenu.*;
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.topVagter.TopVagterGUI;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Bukkit;
@@ -45,9 +42,10 @@ public class MainMenu implements Listener {
     private StatsGUI statsGUI;
     private RankupGUI rankupGUI;
     private VagtLevelGUI vagtLevelGUI;
+    private AchievementsGUI achievementsGUI;
 
-
-    public MainMenu(HLvagt plugin, PVGUI pvgui, TopVagterGUI topVagterGUI, PlayerProfiles playerProfiles, StatsGUI statsGUI, RankupGUI rankupGUI, VagtLevelGUI vagtLevelGUI) {
+    public MainMenu(HLvagt plugin, PVGUI pvgui, TopVagterGUI topVagterGUI, PlayerProfiles playerProfiles,
+                    StatsGUI statsGUI, RankupGUI rankupGUI, VagtLevelGUI vagtLevelGUI) {
         this.plugin = plugin;
         this.pvgui = pvgui;
         this.topVagterGUI = topVagterGUI;
@@ -55,6 +53,7 @@ public class MainMenu implements Listener {
         this.statsGUI = statsGUI;
         this.rankupGUI = rankupGUI;
         this.vagtLevelGUI = vagtLevelGUI;
+        this.achievementsGUI = achievementsGUI;
     }
 
     public void create(Player p, PlayerProfile profile) {
@@ -109,6 +108,9 @@ public class MainMenu implements Listener {
                     vagtLevelGUI.openVagtLevelGUI(p, 1);
                     break;
                 case SETTINGS_INDEX:
+                    break;
+                case ACHIVEMENT_INDEX:
+                    achievementsGUI.openMenu(p);
                     break;
             }
 
