@@ -1,9 +1,9 @@
 package com.gmail.markushygedombrowski.vagtMenu;
 
 import com.gmail.markushygedombrowski.HLvagt;
+import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
-import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.*;
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.topVagter.TopVagterGUI;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
@@ -23,6 +23,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainMenu implements Listener {
     private HLvagt plugin;
@@ -45,7 +46,7 @@ public class MainMenu implements Listener {
     private AchievementsGUI achievementsGUI;
 
     public MainMenu(HLvagt plugin, PVGUI pvgui, TopVagterGUI topVagterGUI, PlayerProfiles playerProfiles,
-                    StatsGUI statsGUI, RankupGUI rankupGUI, VagtLevelGUI vagtLevelGUI) {
+                    StatsGUI statsGUI, RankupGUI rankupGUI, VagtLevelGUI vagtLevelGUI, AchievementsGUI achievementsGUI) {
         this.plugin = plugin;
         this.pvgui = pvgui;
         this.topVagterGUI = topVagterGUI;
@@ -53,7 +54,7 @@ public class MainMenu implements Listener {
         this.statsGUI = statsGUI;
         this.rankupGUI = rankupGUI;
         this.vagtLevelGUI = vagtLevelGUI;
-        this.achievementsGUI = achievementsGUI;
+        this.achievementsGUI = achievementsGUI; // KORREKT - brug parameteren
     }
 
     public void create(Player p, PlayerProfile profile) {
@@ -67,58 +68,66 @@ public class MainMenu implements Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        Player p = (Player) event.getWhoClicked();
-        Inventory inventory = event.getClickedInventory();
-        ItemStack clickeditem = event.getCurrentItem();
-        int clickedSlot = event.getRawSlot();
-        if (clickeditem == null) {
-            return;
-        }
-        if (inventory.getTitle().equalsIgnoreCase("§cVagt Menu §8" + p.getName())) {
+        try {
+            Player p = (Player) event.getWhoClicked();
+            Inventory inventory = event.getClickedInventory();
+            ItemStack clickeditem = event.getCurrentItem();
+            int clickedSlot = event.getRawSlot();
+            if (clickeditem == null) {
+                return;
+            }
+            if (inventory.getTitle().equalsIgnoreCase("§cVagt Menu §8" + p.getName())) {
 
-            switch (clickedSlot) {
-                case PV_INDEX:
-                    pvgui.create(p);
-                    break;
-                case RANKUP_INDEX:
-                    if (p.hasPermission("a-vagt") || p.hasPermission("officer") || p.hasPermission("viceinspektør") || p.hasPermission("inspektør") || p.hasPermission("direktør")) {
-                        p.sendMessage("§aDu kan ikke ranke up mere!");
+                switch (clickedSlot) {
+                    case PV_INDEX:
+                        pvgui.create(p);
                         break;
-                    } else if (p.hasPermission("p-vagt")) {
-                        p.sendMessage("§cDu kan ikke rankup som P-vagt!!");
+                    case RANKUP_INDEX:
+                        if (p.hasPermission("a-vagt") || p.hasPermission("officer") || p.hasPermission("viceinspektør") || p.hasPermission("inspektør") || p.hasPermission("direktør")) {
+                            p.sendMessage("§aDu kan ikke ranke up mere!");
+                            break;
+                        } else if (p.hasPermission("p-vagt")) {
+                            p.sendMessage("§cDu kan ikke rankup som P-vagt!!");
+                            break;
+                        }
+                        rankupGUI.create(p);
                         break;
-                    }
-                    rankupGUI.create(p);
-                    break;
-                case L0N_INDEX:
-                    if (VagtCooldown.isCooling(p.getName(), "lon")) {
-                        VagtCooldown.coolDurMessage(p, "lon");
-                        System.out.println("Cooldown");
+                    case L0N_INDEX:
+                        if (VagtCooldown.isCooling(p.getName(), "lon")) {
+                            VagtCooldown.coolDurMessage(p, "lon");
+                            System.out.println("Cooldown");
+                            break;
+                        }
+                        System.out.println("no cooldown");
                         break;
-                    }
-                    System.out.println("no cooldown");
-                    break;
-                case TOPVAGT_INDEX:
-                    topVagterGUI.create(p);
-                    break;
-                case STATS_INDEX:
-                    statsGUI.create(p);
-                    break;
-                case VAGTLVL_INDEX:
-                    vagtLevelGUI.openVagtLevelGUI(p, 1);
-                    break;
-                case SETTINGS_INDEX:
-                    break;
-                case ACHIVEMENT_INDEX:
-                    achievementsGUI.openMenu(p);
-                    break;
+                    case TOPVAGT_INDEX:
+                        topVagterGUI.create(p);
+                        break;
+                    case STATS_INDEX:
+                        statsGUI.create(p);
+                        break;
+                    case VAGTLVL_INDEX:
+                        vagtLevelGUI.openVagtLevelGUI(p, 1);
+                        break;
+                    case SETTINGS_INDEX:
+                        break;
+                    case ACHIVEMENT_INDEX:
+                        achievementsGUI.openMenu(p);
+                        if (event.getView().getTitle().equals(achievementsGUI)) {
+                            event.setCancelled(true);
+                            event.setResult(Event.Result.DENY);
+                        }
+
+                        break;
+                }
+
+                event.setCancelled(true);
+                event.setResult(Event.Result.DENY);
             }
 
-            event.setCancelled(true);
-            event.setResult(Event.Result.DENY);
+        } catch (NullPointerException e) {
+            plugin.getLogger().warning("NullPointerException i MainMenu.onClickEvent: " + e.getMessage());
         }
-
-
     }
 
     public void meta(Player p, PlayerProfile profile, Inventory inventory) {
@@ -187,8 +196,20 @@ public class MainMenu implements Listener {
         spilletidlore.add("§9" + actualMinutes + " §6Minutes");
 
 
+        // I meta metoden, opdater lonLore listen:
         List<String> lonLore = new ArrayList<>();
-        lonLore.add("§7din §2løn: §a" + profile.getProperty("salary"));
+        double basisLon = profile.castPropertyToInt(profile.getProperty("salary"));
+        double penaltyPercent = plugin.getVagtAchievements().calculateTotalSalaryPenalty(profile);
+        double finalLon = basisLon * (1 - (penaltyPercent / 100.0));
+
+        lonLore.add("§7Din §2løn: §a$" + basisLon);
+        lonLore.add("§7Din §2reelle løn: §a$" + basisLon + penaltyPercent);
+        if (penaltyPercent > 0) {
+            lonLore.add("§cStraf fra døds-achievements: -" + String.format("%.2f", penaltyPercent) + "%");
+            lonLore.add("§7Faktisk §2løn: §a$" + String.format("%.2f", finalLon));
+        }
+        if (VagtCooldown.isCooling(p.getName(), "lon")) {
+        }
 
 
         //Setting Lore on Item

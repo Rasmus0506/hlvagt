@@ -6,10 +6,12 @@ import com.gmail.markushygedombrowski.buff.BuffGui;
 import com.gmail.markushygedombrowski.buff.BuffManager;
 import com.gmail.markushygedombrowski.combat.CombatList;
 import com.gmail.markushygedombrowski.commands.*;
+import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
 import com.gmail.markushygedombrowski.deliveredItems.ItemProfileLoader;
 import com.gmail.markushygedombrowski.inventory.ChangeInvOnWarp;
 import com.gmail.markushygedombrowski.levels.LevelManager;
 import com.gmail.markushygedombrowski.levels.LevelRewards;
+import com.gmail.markushygedombrowski.listners.*;
 import com.gmail.markushygedombrowski.npc.VagtNPCer;
 import com.gmail.markushygedombrowski.npc.vagthavende.DeliverGearGUI;
 import com.gmail.markushygedombrowski.npc.vagthavende.VagthavendeOfficer;
@@ -17,25 +19,20 @@ import com.gmail.markushygedombrowski.panikrum.PanikRumManager;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import com.gmail.markushygedombrowski.rankup.RankupLoader;
-
-import com.gmail.markushygedombrowski.listners.*;
-
 import com.gmail.markushygedombrowski.settings.ConfigManager;
 import com.gmail.markushygedombrowski.settings.Settings;
 import com.gmail.markushygedombrowski.settings.VagtFangePvpConfigManager;
-import com.gmail.markushygedombrowski.sign.*;
-
+import com.gmail.markushygedombrowski.sign.RepairGUI;
+import com.gmail.markushygedombrowski.sign.VagtSigns;
 import com.gmail.markushygedombrowski.utils.Logger;
 import com.gmail.markushygedombrowski.utils.VagtUtils;
-import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
 import com.gmail.markushygedombrowski.vagtMenu.MainMenu;
 import com.gmail.markushygedombrowski.vagtMenu.VagtCommand;
-
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.*;
-import com.gmail.markushygedombrowski.warp.VagtWarpGUI;
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.topVagter.TopVagterGUI;
 import com.gmail.markushygedombrowski.warp.VagtSpawnCommand;
 import com.gmail.markushygedombrowski.warp.VagtSpawnManager;
+import com.gmail.markushygedombrowski.warp.VagtWarpGUI;
 import com.gmail.markushygedombrowski.warp.Warpsign;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.economy.Economy;
@@ -82,7 +79,6 @@ public class HLvagt extends JavaPlugin {
         saveDefaultConfig();
         loadConfigManager();
 
-
         if (!setupEconomy()) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -92,15 +88,19 @@ public class HLvagt extends JavaPlugin {
             luckPerms = Bukkit.getServicesManager().getRegistration(LuckPerms.class).getProvider();
         }
 
-
         VagtUtils vagtUtils = new VagtUtils(this, playerProfiles, settings);
         System.out.println("HL Vagt enabled!!");
+
+        // Opret achievements før initVagt
+        vagtAchievements = new com.gmail.markushygedombrowski.achievements.VagtAchievements(this, playerProfiles, logger);
+        achievementsGUI = new AchievementsGUI(this);
+
         initWarps();
 
         VagtLevelAdminCommands vagtLevelAdminCommands = new VagtLevelAdminCommands(playerProfiles);
         getCommand("vresetall").setExecutor(vagtLevelAdminCommands);
-        initVagt();
 
+        initVagt();
         initListener();
 
         DeliverGearGUI deliverGearGUI = new DeliverGearGUI(itemProfileLoader, playerProfiles);
@@ -109,47 +109,38 @@ public class HLvagt extends JavaPlugin {
         GuiTestCommand guiTestCommand = new GuiTestCommand(deliverGearGUI);
         getCommand("guitest").setExecutor(guiTestCommand);
 
-
         VagthavendeOfficer vagthavendeOfficer = new VagthavendeOfficer(deliverGearGUI, itemProfileLoader, playerProfiles);
         Bukkit.getPluginManager().registerEvents(vagthavendeOfficer, this);
 
         VagtNPCer vagtNPCer = new VagtNPCer(vagthavendeOfficer);
         Bukkit.getPluginManager().registerEvents(vagtNPCer, this);
 
-
         VagtCooldown vagtCooldown = new VagtCooldown(lon);
         RegionEnterlistener regionEnterlistener = new RegionEnterlistener(logger, panikRumManager);
         Bukkit.getPluginManager().registerEvents(regionEnterlistener, this);
 
         GlowNearbyPlayers glowNearbyPlayers = new GlowNearbyPlayers(playerProfiles, this);
-        // glowNearbyPlayers.startGlowingTask();
 
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-
             @Override
             public void run() {
-                vagtCooldown.handleCooldowns();
+                vagtCooldown.hashCode();
             }
         }, 1L, 1L);
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
                 regionEnterlistener.panikrumTimer();
             }
         }, 0, 20);
-
-        vagtAchievements = new com.gmail.markushygedombrowski.achievements.VagtAchievements(this, playerProfiles, logger);
-        achievementsGUI = new AchievementsGUI(this);
-
-
     }
+
 
     public void reload() {
         reloadConfig();
-
         loadConfigManager();
     }
-
 
     public void initWarps() {
         vagtSpawnManager = new VagtSpawnManager(this);
@@ -161,16 +152,11 @@ public class HLvagt extends JavaPlugin {
         Warpsign warpsign = new Warpsign(vagtWarpGUI);
         Bukkit.getPluginManager().registerEvents(vagtWarpGUI, this);
         Bukkit.getPluginManager().registerEvents(warpsign, this);
-
-
     }
-
 
     public void loadConfigManager() {
         logger = new Logger(this);
         logger.setup();
-
-
     }
 
     private boolean setupEconomy() {
@@ -186,10 +172,8 @@ public class HLvagt extends JavaPlugin {
     }
 
     public void initVagt() {
-
         PVGUI pvgui = new PVGUI(this, playerProfiles);
         Bukkit.getPluginManager().registerEvents(pvgui, this);
-
 
         TopVagterGUI topVagterGUI = new TopVagterGUI();
         Bukkit.getPluginManager().registerEvents(topVagterGUI, this);
@@ -206,7 +190,7 @@ public class HLvagt extends JavaPlugin {
         VagtLevelGUI vagtLevelGUI = new VagtLevelGUI(playerProfiles, levelManager);
         Bukkit.getPluginManager().registerEvents(vagtLevelGUI, this);
 
-        MainMenu mainMenu = new MainMenu(this, pvgui, topVagterGUI, playerProfiles, statsGUI, rankupGUI, vagtLevelGUI);
+        MainMenu mainMenu = new MainMenu(this, pvgui, topVagterGUI, playerProfiles, statsGUI, rankupGUI, vagtLevelGUI, achievementsGUI);
         Bukkit.getPluginManager().registerEvents(mainMenu, this);
 
         VagtCommand vagtCommand = new VagtCommand(mainMenu, playerProfiles);
@@ -224,12 +208,10 @@ public class HLvagt extends JavaPlugin {
         RepairGUI repairGUI = new RepairGUI(this, logger);
         Bukkit.getPluginManager().registerEvents(repairGUI, this);
 
-
         VagtStav stav = new VagtStav();
         Bukkit.getPluginManager().registerEvents(stav, this);
 
         lon = new Lon(this, playerProfiles, settings);
-
 
         BuffGui buffGui = new BuffGui(settings, this, playerProfiles, buffManager);
         Bukkit.getPluginManager().registerEvents(buffGui, this);
@@ -247,7 +229,6 @@ public class HLvagt extends JavaPlugin {
         DamageListener damageListener = new DamageListener(settings, vagtSpawnManager, playerProfiles, this, combatList, vagtFangePvpConfigManager, logger, luckPerms, changeInvOnWarp);
         Bukkit.getPluginManager().registerEvents(damageListener, this);
 
-
         DropItemListener dropItemListener = new DropItemListener();
         Bukkit.getPluginManager().registerEvents(dropItemListener, this);
 
@@ -255,13 +236,18 @@ public class HLvagt extends JavaPlugin {
         getCommand("drop").setExecutor(dropcommand);
         PanikRumCommands panikRumCommands = new PanikRumCommands(panikRumManager);
         getCommand("panikrum").setExecutor(panikRumCommands);
-
-
     }
-
 
     public static HLvagt getInstance() {
         return instance;
+    }
+
+    public void onDisable() {
+        VagtCooldown.saveCooldowns();
+    }
+
+    public PlayerProfile getPlayerProfile(UUID uniqueId) {
+        return playerProfiles.getPlayerProfile(uniqueId);
     }
 
     public com.gmail.markushygedombrowski.achievements.VagtAchievements getVagtAchievements() {
@@ -270,13 +256,5 @@ public class HLvagt extends JavaPlugin {
 
     public AchievementsGUI getAchievementsGUI() {
         return achievementsGUI;
-    }
-
-    public void onDisable() {
-
-    }
-
-    public PlayerProfile getPlayerProfile(UUID uniqueId) {
-        return null;
     }
 }

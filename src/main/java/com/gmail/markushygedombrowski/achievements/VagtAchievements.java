@@ -3,9 +3,10 @@ package com.gmail.markushygedombrowski.achievements;
 import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
-import com.gmail.markushygedombrowski.utils.Logger;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Logger;
 
 public class VagtAchievements {
     private final HLvagt plugin;
@@ -18,47 +19,112 @@ public class VagtAchievements {
         this.logger = logger;
     }
 
-    public void checkDeathAchievement(Player p) {
+    public void checkDeathAchievement(Player p) throws InterruptedException {
         PlayerProfile profile = playerProfiles.getPlayerProfile(p.getUniqueId());
         int deaths = p.getStatistic(Statistic.DEATHS);
 
-        // Tjek for forskellige death achievements
-        if (deaths >= 1 && !profile.hasProperty("achievement_death_1")) {
-            applyDeathPenalty(p, profile, 500, false);
-            profile.setProperty("achievement_death_1", true);
-            logger.notify("achievements", p.getName() + " opnåede death achievement 1");
-        }
-        
-        if (deaths >= 5 && !profile.hasProperty("achievement_death_5")) {
-            applyDeathPenalty(p, profile, 2500, false);
-            profile.setProperty("achievement_death_5", true);
-            logger.notify("achievements", p.getName() + " opnåede death achievement 5");
+        checkSingleDeathAchievement(p, profile, deaths, 1, 0.05);
+
+        for (int i = 2; i <= 10; i++) {
+            double penalty = 0.05 + ((i - 1) * 0.02);
+            checkSingleDeathAchievement(p, profile, deaths, i, penalty);
         }
 
-        if (deaths >= 10 && !profile.hasProperty("achievement_death_10")) {
-            applyDeathPenalty(p, profile, 15, true);
-            profile.setProperty("achievement_death_10", true);
-            logger.notify("achievements", p.getName() + " opnåede death achievement 10");
+        for (int i = 15; i <= 100; i += 5) {
+            double penalty = 0.25 + ((i - 15) / 5.0) * 0.05;
+            checkSingleDeathAchievement(p, profile, deaths, i, penalty);
+        }
+
+        for (int i = 125; i <= 250; i += 25) {
+            double penalty = 1.0 + ((i - 125) / 25.0) * 0.15;
+            checkSingleDeathAchievement(p, profile, deaths, i, penalty);
+        }
+
+        for (int i = 150; i <= 300; i += 50) {
+            double penalty = 1.0 + ((i - 150) / 50.0) * 0.25;
+            checkSingleDeathAchievement(p, profile, deaths, i, penalty);
         }
     }
 
-
-    private void applyDeathPenalty(Player player, PlayerProfile profile, double amount, boolean isPercentage) {
-        double penalty;
-        double currentBalance = plugin.econ.getBalance(player);
-
-        if (isPercentage) {
-            penalty = currentBalance * (amount / 100.0);
-        } else {
-            penalty = amount;
+    private void checkSingleDeathAchievement(Player p, PlayerProfile profile, int deaths, int required, double penaltyPercent) throws InterruptedException {
+        String achievementKey = "achievement_death_" + required;
+        if (deaths >= required && !profile.hasProperty(achievementKey)) {
+            profile.setProperty(achievementKey, true);
+            profile.setProperty(achievementKey + "_penalty", String.valueOf(penaltyPercent));
+            profile.wait(); // Gem ændringerne med det samme
+            logger.notify();
         }
-
-        plugin.econ.withdrawPlayer(player, penalty);
-        sendPenaltyMessage(player, amount, isPercentage);
     }
 
-    private void sendPenaltyMessage(Player player, double amount, boolean isPercentage) {
-        String penaltyText = isPercentage ? amount + "%" : "$" + amount;
-        player.sendMessage("§c☠ Du har mistet " + penaltyText + " for at dø!");
+    public double calculateTotalSalaryPenalty(PlayerProfile profile) {
+        double totalPenalty = 0.0;
+
+        for (int i = 1; i <= 10; i++) {
+            String key = "achievement_death_" + i;
+            if (profile.hasProperty(key) && profile.hasProperty(key + "_penalty")) {
+                try {
+                    double penalty = Double.parseDouble(String.valueOf(profile.getProperty(key + "_penalty")));
+                    totalPenalty += penalty;
+                } catch (NumberFormatException e) {
+                    try {
+                        logger.wait(Long.parseLong("Fejl ved parsing af penalty for " + key + ": " + e.getMessage()));
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
+
+        for (int i = 15; i <= 100; i += 5) {
+            String key = "achievement_death_" + i;
+            if (profile.hasProperty(key) && profile.hasProperty(key + "_penalty")) {
+                try {
+                    double penalty = Double.parseDouble(String.valueOf(profile.getProperty(key + "_penalty")));
+                    totalPenalty += penalty;
+                } catch (NumberFormatException e) {
+                    try {
+                        logger.wait(Long.parseLong("Fejl ved parsing af penalty for " + key + ": " + e.getMessage()));
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }
+
+        for (int i = 125; i <= 250; i += 25) {
+            String key = "achievement_death_" + i;
+            if (profile.hasProperty(key) && profile.hasProperty(key + "_penalty")) {
+                try {
+                    double penalty = Double.parseDouble(String.valueOf(profile.getProperty(key + "_penalty")));
+                    totalPenalty += penalty;
+                } catch (NumberFormatException e) {
+                    try {
+                        logger.wait(Long.parseLong("Fejl ved parsing af penalty for " + key + ": " + e.getMessage()));
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        }
+
+        for (int i = 150; i <= 300; i += 50) {
+            String key = "achievement_death_" + i;
+            if (profile.hasProperty(key) && profile.hasProperty(key + "_penalty")) {
+                try {
+                    double penalty = Double.parseDouble(String.valueOf(profile.getProperty(key + "_penalty")));
+                    totalPenalty += penalty;
+                } catch (NumberFormatException e) {
+                    try {
+                        logger.wait(Long.parseLong("Fejl ved parsing af penalty for " + key + ": " + e.getMessage()));
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        }
+
+        return Math.min(totalPenalty, 100.0);
     }
 }

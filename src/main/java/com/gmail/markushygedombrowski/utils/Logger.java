@@ -10,12 +10,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Logger {
+public class Logger extends java.util.logging.Logger {
     File generalReports;
     File vagtdeathlog;
     File vagtcellelog;
     private HLvagt plugin;
     public Logger(HLvagt plugin) {
+        super(Logger.class.getName(), null);
         this.plugin = plugin;
         System.out.println(plugin.getDataFolder()+"");
         generalReports = new File(plugin.getDataFolder() + "/reports.txt");
