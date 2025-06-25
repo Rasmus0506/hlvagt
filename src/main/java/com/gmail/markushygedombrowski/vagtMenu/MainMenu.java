@@ -152,7 +152,7 @@ public class MainMenu implements Listener {
         SkullMeta statsmeta = (SkullMeta) stats.getItemMeta();
         statsmeta.setOwner(p.getName());
         stats.setItemMeta(statsmeta);
-        // Getting Meta
+
         ItemMeta metastats = stats.getItemMeta();
         ItemMeta metatopv = topvagt.getItemMeta();
 
@@ -164,7 +164,7 @@ public class MainMenu implements Listener {
         ItemMeta metalon = lon.getItemMeta();
         ItemMeta metasettings = settings.getItemMeta();
 
-        // DisplayName
+
         metastats.setDisplayName("§7[§a§lStats§7]");
         metatopv.setDisplayName("§7[§cTopVagter§7]");
         metatid.setDisplayName("§7[§aSpilleTid§7]");
@@ -175,7 +175,7 @@ public class MainMenu implements Listener {
         metalon.setDisplayName("§7[§aLøn§7]");
         metasettings.setDisplayName("§7[§cSettings§7]");
 
-        // Lores
+
 
         List<String> topVagterLore = new ArrayList<>();
         topVagterLore.add("§7Se §aTopVagterne");
@@ -196,29 +196,40 @@ public class MainMenu implements Listener {
         spilletidlore.add("§9" + actualMinutes + " §6Minutes");
 
 
-        // I meta metoden, opdater lonLore listen:
+
         List<String> lonLore = new ArrayList<>();
         double basisLon = profile.castPropertyToInt(profile.getProperty("salary"));
         double penaltyPercent = plugin.getVagtAchievements().calculateTotalSalaryPenalty(profile);
-        double finalLon = basisLon * (1 - (penaltyPercent / 100.0));
+        double bonusPercent = plugin.getVagtAchievements().calculateTotalSalaryBonus(profile);
+        double netPercent = bonusPercent - penaltyPercent;
+        double finalLon = basisLon * (1 + (netPercent / 100.0));
 
-        lonLore.add("§7Din §2løn: §a$" + basisLon);
-        lonLore.add("§7Din §2reelle løn: §a$" + basisLon + penaltyPercent);
+        lonLore.add("§7Din §2basis-løn: §a$" + basisLon);
+
         if (penaltyPercent > 0) {
             lonLore.add("§cStraf fra døds-achievements: -" + String.format("%.2f", penaltyPercent) + "%");
-            lonLore.add("§7Faktisk §2løn: §a$" + String.format("%.2f", finalLon));
         }
+        if (bonusPercent > 0) {
+            lonLore.add("§aBonus fra kill-achievements: +" + String.format("%.2f", bonusPercent) + "%");
+        }
+        if (netPercent != 0) {
+            String netPercentPrefix = netPercent > 0 ? "§a+" : "§c";
+            lonLore.add("§7Samlet bonus/straf: " + netPercentPrefix + String.format("%.2f", netPercent) + "%");
+            lonLore.add("§7Samlet §2løn: §a$" + String.format("%.2f", finalLon));
+        }
+
         if (VagtCooldown.isCooling(p.getName(), "lon")) {
+
         }
 
 
-        //Setting Lore on Item
+
         metastats.setLore(statsLore);
         metatid.setLore(spilletidlore);
         metatopv.setLore(topVagterLore);
         metalon.setLore(lonLore);
 
-        // Setting Meta on Item
+
 
         stats.setItemMeta(metastats);
         topvagt.setItemMeta(metatopv);

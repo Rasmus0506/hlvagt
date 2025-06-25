@@ -95,6 +95,10 @@ public class HLvagt extends JavaPlugin {
         vagtAchievements = new com.gmail.markushygedombrowski.achievements.VagtAchievements(this, playerProfiles, logger);
         achievementsGUI = new AchievementsGUI(this);
 
+        // Registrer AchievementsListener
+        getServer().getPluginManager().registerEvents(new AchivementsListener(this), this);
+        
+
         initWarps();
 
         VagtLevelAdminCommands vagtLevelAdminCommands = new VagtLevelAdminCommands(playerProfiles);

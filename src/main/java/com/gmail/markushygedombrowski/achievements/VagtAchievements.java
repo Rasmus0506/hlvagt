@@ -127,4 +127,110 @@ public class VagtAchievements {
 
         return Math.min(totalPenalty, 100.0);
     }
+    public void checkKillAchievement(Player p) throws InterruptedException {
+        PlayerProfile profile = playerProfiles.getPlayerProfile(p.getUniqueId());
+        int kills = p.getStatistic(Statistic.PLAYER_KILLS);
+
+        checkSingleKillAchievement(p, profile, kills, 1, 0.05);
+
+        for (int i = 2; i <= 10; i++) {
+            double bonus = 0.05 + ((i - 1) * 0.02);
+            checkSingleKillAchievement(p, profile, kills, i, bonus);
+        }
+
+        for (int i = 15; i <= 100; i += 5) {
+            double bonus = 0.25 + ((i - 15) / 5.0) * 0.05;
+            checkSingleKillAchievement(p, profile, kills, i, bonus);
+        }
+
+        for (int i = 125; i <= 250; i += 25) {
+            double bonus = 1.0 + ((i - 125) / 25.0) * 0.15;
+            checkSingleKillAchievement(p, profile, kills, i, bonus);
+        }
+
+        for (int i = 150; i <= 300; i += 50) {
+            double bonus = 1.0 + ((i - 150) / 50.0) * 0.25;
+            checkSingleKillAchievement(p, profile, kills, i, bonus);
+        }
+    }
+
+    private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kills, int required, double bonusPercent) throws InterruptedException {
+        String achievementKey = "achievement_kill_" + required;
+        if (kills >= required && !profile.hasProperty(achievementKey)) {
+            profile.setProperty(achievementKey, true);
+            profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
+            profile.wait();
+            logger.notify();
+        }
+    }
+
+    public double calculateTotalSalaryBonus(PlayerProfile profile) {
+        double totalBonus = 0.0;
+        
+
+        for (int i = 1; i <= 10; i++) {
+            String property = "achievement_kill_" + i;
+            if (profile.hasProperty(property)) {
+                String bonusProperty = property + "_bonus";
+                String bonusValue = profile.getProperty(bonusProperty).toString();
+                if (bonusValue != null) {
+                    try {
+                        totalBonus += Double.parseDouble(bonusValue);
+                    } catch (NumberFormatException e) {
+                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
+                    }
+                }
+            }
+        }
+        
+
+        for (int i = 15; i <= 100; i += 5) {
+            String property = "achievement_kill_" + i;
+            if (profile.hasProperty(property)) {
+                String bonusProperty = property + "_bonus";
+                String bonusValue = profile.getProperty(bonusProperty).toString();
+                if (bonusValue != null) {
+                    try {
+                        totalBonus += Double.parseDouble(bonusValue);
+                    } catch (NumberFormatException e) {
+                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
+                    }
+                }
+            }
+        }
+        
+
+        for (int i = 125; i <= 250; i += 25) {
+            String property = "achievement_kill_" + i;
+            if (profile.hasProperty(property)) {
+                String bonusProperty = property + "_bonus";
+                String bonusValue = profile.getProperty(bonusProperty).toString();
+                if (bonusValue != null) {
+                    try {
+                        totalBonus += Double.parseDouble(bonusValue);
+                    } catch (NumberFormatException e) {
+                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
+                    }
+                }
+            }
+        }
+        
+
+        for (int i = 300; i <= 500; i += 50) {
+            String property = "achievement_kill_" + i;
+            if (profile.hasProperty(property)) {
+                String bonusProperty = property + "_bonus";
+                String bonusValue = profile.getProperty(bonusProperty).toString();
+                if (bonusValue != null) {
+                    try {
+                        totalBonus += Double.parseDouble(bonusValue);
+                    } catch (NumberFormatException e) {
+                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
+                    }
+                }
+            }
+        }
+        
+        return totalBonus;
+    }
 }
