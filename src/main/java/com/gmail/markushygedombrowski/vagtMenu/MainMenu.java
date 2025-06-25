@@ -19,6 +19,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -176,7 +177,6 @@ public class MainMenu implements Listener {
         metasettings.setDisplayName("§7[§cSettings§7]");
 
 
-
         List<String> topVagterLore = new ArrayList<>();
         topVagterLore.add("§7Se §aTopVagterne");
 
@@ -194,7 +194,6 @@ public class MainMenu implements Listener {
         List<String> spilletidlore = new ArrayList<>();
         spilletidlore.add("§9" + hours + " §6Hours");
         spilletidlore.add("§9" + actualMinutes + " §6Minutes");
-
 
 
         List<String> lonLore = new ArrayList<>();
@@ -223,12 +222,10 @@ public class MainMenu implements Listener {
         }
 
 
-
         metastats.setLore(statsLore);
         metatid.setLore(spilletidlore);
         metatopv.setLore(topVagterLore);
         metalon.setLore(lonLore);
-
 
 
         stats.setItemMeta(metastats);
@@ -256,5 +253,37 @@ public class MainMenu implements Listener {
             }
         });
 
+    }
+    private ItemStack createDamageMenuButton(Player player) {
+        ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+        ItemMeta meta = sword.getItemMeta();
+        meta.setDisplayName("§6⚔ Damage Achievements ⚔");
+
+        List<String> lore = new ArrayList<>();
+        // Konvertér damage til positive tal og del med 10 for at få hjerter
+        double totalDamage = Math.abs(player.getStatistic(Statistic.DAMAGE_DEALT)) / 10.0;
+        lore.add("§7Total damage givet: §6" + String.format("%.1f", totalDamage) + " hjerter");
+        lore.add("");
+        lore.add("§7Achievements opnået:");
+
+        PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
+        int achieved = 0;
+        int total = 10;
+
+        // Tæl opnåede damage achievements
+        for (int i = 5; i <= 140; i += 15) {
+            String achievementKey = "achievement_damage_" + i;
+            if (profile != null && profile.hasProperty(achievementKey)) {
+                achieved++;
+            }
+        }
+
+        lore.add("§7" + achieved + "§8/§7" + total);
+        lore.add("");
+        lore.add("§eKlik for at se alle achievements");
+
+        meta.setLore(lore);
+        sword.setItemMeta(meta);
+        return sword;
     }
 }

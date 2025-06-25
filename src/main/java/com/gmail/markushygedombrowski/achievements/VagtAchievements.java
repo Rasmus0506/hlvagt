@@ -6,6 +6,8 @@ import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class VagtAchievements {
@@ -233,4 +235,35 @@ public class VagtAchievements {
         
         return totalBonus;
     }
+private static class VagtAchievement {
+    private final String property;
+    private final String description;
+    private final int requiredAmount;
+    private final double percentModifier;
+
+    public VagtAchievement(String property, String description, int requiredAmount, double percentModifier) {
+        this.property = property;
+        this.description = description;
+        this.requiredAmount = requiredAmount;
+        this.percentModifier = percentModifier;
+    }
+}
+private List<VagtAchievement> initializeDamageAchievements() {
+    List<VagtAchievement> achievementList = new ArrayList<>();
+    double currentBonus = 0.001;
+    
+    // Start med 5 damage og forøg med 15
+    for (int damage = 5; damage <= 500; damage += 15) {
+        achievementList.add(new VagtAchievement(
+            "achievement_damage_" + damage,
+            "Giv " + damage + " damage",
+            damage,
+            currentBonus
+        ));
+        // Fordobl bonus for hvert niveau
+        currentBonus *= 2;
+    }
+    
+    return achievementList;
+}
 }

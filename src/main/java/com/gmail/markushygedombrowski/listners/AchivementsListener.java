@@ -6,6 +6,7 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -22,6 +23,7 @@ public class AchivementsListener implements Listener {
             Player player = event.getPlayer();
             handleDeathAchievements(player);
             handleKillAchievements(player);
+            handleDamageAchievements(player); // Tilføj denne linje
         } catch (InterruptedException e) {
             plugin.getLogger().warning("Fejl ved checking af achievement ved join: " + e.getMessage());
             e.printStackTrace();
@@ -38,12 +40,26 @@ public class AchivementsListener implements Listener {
             
             if (killer != null) {
                 handleKillAchievements(killer);
+                handleDamageAchievements(killer); // Tilføj denne linje
             }
         } catch (InterruptedException e) {
             plugin.getLogger().warning("Fejl ved checking af achievement: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+@EventHandler
+public void onPlayerDamage(EntityDamageByEntityEvent event) {
+    if (event.getDamager() instanceof Player) {
+        Player player = (Player) event.getDamager();
+        try {
+            handleDamageAchievements(player);
+        } catch (InterruptedException e) {
+            plugin.getLogger().warning("Fejl ved checking af damage achievement: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
 
     private void handleDeathAchievements(Player player) throws InterruptedException {
         PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
@@ -116,4 +132,35 @@ public class AchivementsListener implements Listener {
             plugin.getLogger().info("Kill achievement unlocked for " + p.getName() + ": " + achievementKey);
         }
     }
+
+private void handleDamageAchievements(Player player) throws InterruptedException {
+    PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
+    // Konvertér damage til positive tal og del med 10 for at få hjerter
+    int damage = Math.abs(player.getStatistic(Statistic.DAMAGE_DEALT)) / 10;
+
+    checkSingleDamageAchievement(player, profile, damage, 5, 0.001);
+
+    double previousBonus = 0.001;
+    int previousDamage = 5;
+    
+    // Stigende damage med 15 og bonus med 2x
+    for (int i = 1; i <= 10; i++) {
+        int requiredDamage = previousDamage + 15;
+        double bonus = previousBonus * 2;
+        
+        checkSingleDamageAchievement(player, profile, damage, requiredDamage, bonus);
+        
+        previousDamage = requiredDamage;
+        previousBonus = bonus;
+    }
+}
+
+private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int damage, int required, double bonusPercent) throws InterruptedException {
+    String achievementKey = "achievement_damage_" + required;
+    if (damage >= required && !profile.hasProperty(achievementKey)) {
+        profile.setProperty(achievementKey, true);
+        profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
+        plugin.getLogger().info("Damage achievement unlocked for " + p.getName() + ": " + achievementKey);
+    }
+}
 }

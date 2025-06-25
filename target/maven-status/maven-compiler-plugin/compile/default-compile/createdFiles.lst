@@ -21,6 +21,7 @@ com\gmail\markushygedombrowski\HLvagt$1.class
 com\gmail\markushygedombrowski\listners\OnJoin.class
 com\gmail\markushygedombrowski\vagtMenu\subMenu\SettingGui.class
 com\gmail\markushygedombrowski\utils\Logger.class
+com\gmail\markushygedombrowski\achievements\VagtAchievements$VagtAchievement.class
 com\gmail\markushygedombrowski\rankup\RankupLoader.class
 com\gmail\markushygedombrowski\listners\DamageListener$1.class
 com\gmail\markushygedombrowski\commands\Rankupcommand.class
@@ -40,6 +41,7 @@ com\gmail\markushygedombrowski\utils\VagtUtils.class
 com\gmail\markushygedombrowski\npc\vagthavende\VagthavendeOfficer.class
 com\gmail\markushygedombrowski\cooldown\TimeUnit.class
 com\gmail\markushygedombrowski\sign\RepairGUI.class
+com\gmail\markushygedombrowski\listners\AchivementsListener.class
 com\gmail\markushygedombrowski\warp\Warpsign.class
 com\gmail\markushygedombrowski\achievements\VagtAchievements.class
 com\gmail\markushygedombrowski\vagtMenu\MainMenu.class

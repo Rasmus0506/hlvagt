@@ -39,7 +39,7 @@ public class VagtWarpGUI implements Listener {
         ItemStack warpB = createWarpItem(DyeColor.BLUE, "§b§lWarp B");
         ItemStack warpA = createWarpItem(DyeColor.GREEN, "§a§lWarp A");
         ItemStack warpAvagtceller = createWarpItem(DyeColor.GREEN, "§a§lWarp A Vagt Celler");
-        ItemStack warpBvcellestue = createWarpItem(DyeColor.BLUE, "§b§lWarp B Vand Celler");
+        ItemStack warpBvcellestue = createWarpItem(DyeColor.BLUE, "§b§lWarp B Vagt Celler");
         ItemStack warpCvcellestue = createWarpItem(DyeColor.RED, "§c§lWarp C Vagt Celler");
 
         inventory.setItem(WARP_C_INDEX, warpC);
