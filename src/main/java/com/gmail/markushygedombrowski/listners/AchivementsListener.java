@@ -182,7 +182,13 @@ private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int d
     if (damage >= required && !profile.hasProperty(achievementKey)) {
         profile.setProperty(achievementKey, true);
         profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
-        plugin.getLogger().info("Damage achievement unlocked for " + p.getName() + ": " + achievementKey);
+        
+        // Send besked til spilleren
+        p.sendMessage("§6⚔ Achievement opnået: §7Giv " + required + " damage");
+        p.sendMessage("§7Du har fået en bonus på §a+" + String.format("%.3f", bonusPercent) + "% §7til din løn");
+        
+        // Log achievement
+        plugin.getLogger().info(p.getName() + " har opnået damage achievement: " + achievementKey);
     }
 }
 }
