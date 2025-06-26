@@ -1,10 +1,10 @@
 main: com.gmail.markushygedombrowski.HLvagt
 name: HLvagt
 version: "1.0"
-depend:  [Vault,WorldGuard,WorldEdit,HeadDatabase,Combat,HLUtils,Citizens,VagtProfiler,WGRegionEvents]
+depend: [ Vault,WorldGuard,WorldEdit,HeadDatabase,Combat,HLUtils,Citizens,VagtProfiler,WGRegionEvents ]
 commands:
   vagtspawn:
-    aliases: ["setvagtspawn", "resetvagtspawn"]
+    aliases: [ "setvagtspawn", "resetvagtspawn" ]
     description: "vagtspawn system"
   vagt:
     description: "vagt"
@@ -17,14 +17,16 @@ commands:
   fyr:
     description: "fyr vagter"
   aktivbuff:
-    aliases: ["buff"]
+    aliases: [ "buff" ]
     description: "vagt buff aktiv"
   guitest:
     description: "test gui"
   vresetall:
-    aliases: ["vconfirmresetall", "vreset", "vsetexp", "vsetlevel","vbufflevel","vaddexp","vaddlevel","vsetvagtpost","vlevel", "vsetplaytime"]
+    aliases: [ "vconfirmresetall", "vreset", "vsetexp", "vsetlevel","vbufflevel","vaddexp","vaddlevel","vsetvagtpost","vlevel", "vsetplaytime" ]
     description: "resetter alle vagter"
   panikrum:
     description: "panikrum"
   buffreload:
     description: "reload buff"
+  sellchest:
+    description: "Giver en vagt sælge kiste"

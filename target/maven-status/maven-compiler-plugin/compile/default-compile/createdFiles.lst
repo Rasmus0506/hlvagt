@@ -12,6 +12,7 @@ com\gmail\markushygedombrowski\commands\GuiTestCommand.class
 com\gmail\markushygedombrowski\commands\FyrCommand.class
 com\gmail\markushygedombrowski\warp\VagtSpawnManager.class
 com\gmail\markushygedombrowski\listners\DropItemListener.class
+com\gmail\markushygedombrowski\sellchest\SellChestCommand.class
 com\gmail\markushygedombrowski\HLvagt$2.class
 com\gmail\markushygedombrowski\listners\VagtStav.class
 com\gmail\markushygedombrowski\cooldown\utilMath.class
@@ -27,10 +28,12 @@ com\gmail\markushygedombrowski\listners\DamageListener$1.class
 com\gmail\markushygedombrowski\commands\Rankupcommand.class
 com\gmail\markushygedombrowski\commands\VagtLevelAdminCommands.class
 com\gmail\markushygedombrowski\npc\VagtNPCer.class
+com\gmail\markushygedombrowski\sellchest\VagtChestManager.class
 com\gmail\markushygedombrowski\utils\LuckPermsHelpers.class
 com\gmail\markushygedombrowski\vagtMenu\subMenu\AchievementsGUI$VagtAchievement.class
 com\gmail\markushygedombrowski\commands\Dropcommand.class
 com\gmail\markushygedombrowski\listners\RegionEnterlistener.class
+com\gmail\markushygedombrowski\sellchest\SellPriceManager.class
 com\gmail\markushygedombrowski\vagtMenu\VagtCommand.class
 com\gmail\markushygedombrowski\commands\FineCommand.class
 com\gmail\markushygedombrowski\vagtMenu\subMenu\PVGUI.class

@@ -50,11 +50,11 @@ public class VagtChestManager implements Listener {
 
             int id = item.getTypeId();
             double price = priceManager.getPrice(id);
-            
+
             if (price > 0) {
                 int amount = item.getAmount();
                 totalMoney += price * amount;
-                
+
                 String itemName = item.getType().name();
                 soldItems.put(itemName, soldItems.getOrDefault(itemName, 0) + amount);
             } else {
@@ -62,7 +62,7 @@ public class VagtChestManager implements Listener {
             }
         }
 
-        // Send beskeder til spilleren
+
         player.sendMessage("§6            Items§6:");
         player.sendMessage("");
         for (Map.Entry<String, Integer> entry : soldItems.entrySet()) {
@@ -71,7 +71,6 @@ public class VagtChestManager implements Listener {
         player.sendMessage("");
         player.sendMessage("§cDu Har Tjent§6 $" + totalMoney);
 
-        // Tilføj penge til spillerens konto (kræver Vault integration)
-        // econ.depositPlayer(player, totalMoney);
+
     }
 }

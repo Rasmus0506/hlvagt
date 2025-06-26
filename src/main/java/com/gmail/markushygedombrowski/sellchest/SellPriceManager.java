@@ -20,7 +20,7 @@ public class SellPriceManager {
     }
 
     private void loadPrices() {
-        // Indlæs alle priser fra config filen
+
         if (config.contains("prices")) {
             for (String key : config.getConfigurationSection("prices").getKeys(false)) {
                 try {
@@ -28,20 +28,20 @@ public class SellPriceManager {
                     double price = config.getDouble("prices." + key);
                     sellPrices.put(id, price);
                 } catch (NumberFormatException e) {
-                    // Ignorer ugyldige værdier
+
                 }
             }
         } else {
-            // Tilføj standard priser hvis config er tom
+
             setupDefaultPrices();
         }
     }
 
     private void setupDefaultPrices() {
-        // Tilføj alle dine standard priser her
-        sellPrices.put(1, 5.0);  // s1 = 5
-        sellPrices.put(2, 5.0);  // s2 = 5
-        // ... tilføj resten af priserne
+
+        sellPrices.put(1, 5.0);
+        sellPrices.put(2, 5.0);
+
         savePrices();
     }
 

@@ -237,7 +237,7 @@ public class HLvagt extends JavaPlugin {
         AktivBuffCmd aktivBuffCmd = new AktivBuffCmd(settings, buffManager);
         getCommand("aktivbuff").setExecutor(aktivBuffCmd);
 
-        // Tilføj i initVagt() metoden
+
         SellChestCommand sellChestCommand = new SellChestCommand(this);
         getCommand("sellchest").setExecutor(sellChestCommand);
     }
