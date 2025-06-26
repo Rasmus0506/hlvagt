@@ -123,23 +123,37 @@ public void onPlayerDamage(EntityDamageByEntityEvent event) {
         }
     }
 
-    private void checkSingleDeathAchievement(Player p, PlayerProfile profile, int deaths, int required, double penaltyPercent) throws InterruptedException {
-        String achievementKey = "achievement_death_" + required;
-        if (deaths >= required && !profile.hasProperty(achievementKey)) {
-            profile.setProperty(achievementKey, true);
-            profile.setProperty(achievementKey + "_penalty", String.valueOf(penaltyPercent));
-            plugin.getLogger().info("Death achievement unlocked for " + p.getName() + ": " + achievementKey);
-        }
+private void checkSingleDeathAchievement(Player p, PlayerProfile profile, int deaths, int required, double penaltyPercent) throws InterruptedException {
+    String achievementKey = "achievement_death_" + required;
+    if (deaths >= required && !profile.hasProperty(achievementKey)) {
+        profile.setProperty(achievementKey, true);
+        profile.setProperty(achievementKey + "_penalty", String.valueOf(penaltyPercent));
+        profile.wait();
+        
+        // Send besked til spilleren
+        p.sendMessage("§c☠ Achievement opnået: §7Dø " + required + " gang(e)");
+        p.sendMessage("§7Du har fået en straf på §c-" + String.format("%.2f", penaltyPercent) + "% §7af din løn");
+        
+        // Log achievement
+        plugin.getLogger().info(p.getName() + " har opnået death achievement: " + achievementKey);
     }
+}
 
-    private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kills, int required, double bonusPercent) throws InterruptedException {
-        String achievementKey = "achievement_kill_" + required;
-        if (kills >= required && !profile.hasProperty(achievementKey)) {
-            profile.setProperty(achievementKey, true);
-            profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
-            plugin.getLogger().info("Kill achievement unlocked for " + p.getName() + ": " + achievementKey);
-        }
+private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kills, int required, double bonusPercent) throws InterruptedException {
+    String achievementKey = "achievement_kill_" + required;
+    if (kills >= required && !profile.hasProperty(achievementKey)) {
+        profile.setProperty(achievementKey, true);
+        profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
+        profile.wait();
+
+        // Send besked til spilleren
+        p.sendMessage("§a☠ Achievement opnået: §7Dræb " + required + " spiller(e)");
+        p.sendMessage("§7Du har fået en bonus på §a+" + String.format("%.2f", bonusPercent) + "% §7til din løn");
+        
+        // Log achievement
+        plugin.getLogger().info(p.getName() + " har opnået kill achievement: " + achievementKey);
     }
+}
 
 private void handleDamageAchievements(Player player) throws InterruptedException {
     PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
