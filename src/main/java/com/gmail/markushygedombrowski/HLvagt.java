@@ -146,8 +146,12 @@ public class HLvagt extends JavaPlugin {
 
         // Initialiser sælge-kiste systemet
         sellPriceManager = new SellPriceManager(getDataFolder());
-        vagtChestManager = new VagtChestManager(sellPriceManager);
+        vagtChestManager = new VagtChestManager(sellPriceManager, econ, getDataFolder());
         getServer().getPluginManager().registerEvents(vagtChestManager, this);
+
+        // Registrer sellchest kommandoen
+        SellChestCommand sellChestCommand = new SellChestCommand(this, vagtChestManager);
+        getCommand("sellchest").setExecutor(sellChestCommand);
 
         // ... resten af din kode ...
     }
@@ -238,8 +242,7 @@ public class HLvagt extends JavaPlugin {
         getCommand("aktivbuff").setExecutor(aktivBuffCmd);
 
 
-        SellChestCommand sellChestCommand = new SellChestCommand(this);
-        getCommand("sellchest").setExecutor(sellChestCommand);
+
     }
 
     public void initListener() {
