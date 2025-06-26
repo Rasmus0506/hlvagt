@@ -50,14 +50,22 @@ public class AchivementsListener implements Listener {
 
 @EventHandler
 public void onPlayerDamage(EntityDamageByEntityEvent event) {
-    if (event.getDamager() instanceof Player) {
-        Player player = (Player) event.getDamager();
-        try {
-            handleDamageAchievements(player);
-        } catch (InterruptedException e) {
-            plugin.getLogger().warning("Fejl ved checking af damage achievement: " + e.getMessage());
-            e.printStackTrace();
-        }
+    if (!(event.getDamager() instanceof Player)) {
+        return;
+    }
+    Player damager = (Player) event.getDamager();
+    double damage = event.getFinalDamage();
+    
+    // Gem damage i spillerens statistik
+    PlayerProfile profile = plugin.getPlayerProfile(damager.getUniqueId());
+    int currentDamage = profile.castPropertyToInt(profile.getProperty("damage_dealt"));
+    profile.setProperty("damage_dealt", String.valueOf(currentDamage + (int)damage));
+    
+    // Check achievements
+    try {
+        handleDamageAchievements(damager);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
     }
 }
 

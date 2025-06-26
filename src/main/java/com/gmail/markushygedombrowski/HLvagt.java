@@ -19,6 +19,9 @@ import com.gmail.markushygedombrowski.panikrum.PanikRumManager;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import com.gmail.markushygedombrowski.rankup.RankupLoader;
+import com.gmail.markushygedombrowski.sellchest.SellChestCommand;
+import com.gmail.markushygedombrowski.sellchest.SellPriceManager;
+import com.gmail.markushygedombrowski.sellchest.VagtChestManager;
 import com.gmail.markushygedombrowski.settings.ConfigManager;
 import com.gmail.markushygedombrowski.settings.Settings;
 import com.gmail.markushygedombrowski.settings.VagtFangePvpConfigManager;
@@ -43,6 +46,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 public class HLvagt extends JavaPlugin {
+    private SellPriceManager sellPriceManager;
+    private VagtChestManager vagtChestManager;
     public Economy econ = null;
     private VagtSpawnManager vagtSpawnManager;
     private Lon lon;
@@ -138,6 +143,13 @@ public class HLvagt extends JavaPlugin {
                 regionEnterlistener.panikrumTimer();
             }
         }, 0, 20);
+
+        // Initialiser sælge-kiste systemet
+        sellPriceManager = new SellPriceManager(getDataFolder());
+        vagtChestManager = new VagtChestManager(sellPriceManager);
+        getServer().getPluginManager().registerEvents(vagtChestManager, this);
+
+        // ... resten af din kode ...
     }
 
 
@@ -224,6 +236,10 @@ public class HLvagt extends JavaPlugin {
 
         AktivBuffCmd aktivBuffCmd = new AktivBuffCmd(settings, buffManager);
         getCommand("aktivbuff").setExecutor(aktivBuffCmd);
+
+        // Tilføj i initVagt() metoden
+        SellChestCommand sellChestCommand = new SellChestCommand(this);
+        getCommand("sellchest").setExecutor(sellChestCommand);
     }
 
     public void initListener() {

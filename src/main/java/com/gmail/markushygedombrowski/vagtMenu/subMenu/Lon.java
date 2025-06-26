@@ -29,22 +29,28 @@ public class Lon {
                 return;
             }
 
-            // Beregn basis løn
+
             double basisLon = profile.castPropertyToInt(profile.getProperty("salary"));
-            
-            // Beregn løn reduktion baseret på døds-achievements
+        
+
             double penaltyPercent = plugin.getVagtAchievements().calculateTotalSalaryPenalty(profile);
-            double finalLon = basisLon * (1 - (penaltyPercent / 100.0));
-            
+
+            double bonusPercent = plugin.getVagtAchievements().calculateTotalSalaryBonus(profile);
+        
+
+            double finalLon = basisLon * (1 - (penaltyPercent / 100.0)) * (1 + (bonusPercent / 100.0));
+        
             plugin.econ.depositPlayer(p, finalLon);
-            
-            // Vis besked med løn og eventuel reduktion
+        
+
+            StringBuilder message = new StringBuilder(ChatColor.GRAY + "Du har fået" + ChatColor.AQUA + " Løn!");
             if (penaltyPercent > 0) {
-                p.sendMessage(ChatColor.GRAY + "Du har fået" + ChatColor.AQUA + " Løn! " + 
-                            ChatColor.RED + "(-" + String.format("%.2f", penaltyPercent) + "% pga. døds-achievements)");
-            } else {
-                p.sendMessage(ChatColor.GRAY + "Du har fået" + ChatColor.AQUA + " Løn!");
+                message.append(ChatColor.RED + " (-").append(String.format("%.2f", penaltyPercent)).append("% pga. døds-achievements)");
             }
+            if (bonusPercent > 0) {
+                message.append(ChatColor.GREEN + " (+").append(String.format("%.2f", bonusPercent)).append("% bonus for damage)");
+            }
+            p.sendMessage(message.toString());
 
             VagtCooldown.add(p.getName(), "lon", settings.getLonTime(), System.currentTimeMillis());
         }
