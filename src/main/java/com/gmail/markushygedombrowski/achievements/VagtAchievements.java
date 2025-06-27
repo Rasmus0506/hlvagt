@@ -137,7 +137,7 @@ public class VagtAchievements {
 
         for (int i = 2; i <= 10; i++) {
             double bonus = 0.05 + ((i - 1) * 0.02);
-            checkSingleKillAchievement(p, profile, kills, i, bonus);
+           checkSingleKillAchievement(p, profile, kills, i, bonus);
         }
 
         for (int i = 15; i <= 100; i += 5) {
@@ -156,86 +156,71 @@ public class VagtAchievements {
         }
     }
 
-    private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kills, int required, double bonusPercent) throws InterruptedException {
-        String achievementKey = "achievement_kill_" + required;
-        if (kills >= required && !profile.hasProperty(achievementKey)) {
-            profile.setProperty(achievementKey, true);
-            profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
-            profile.wait();
-            logger.notify();
+private List<VagtAchievement> initializeKillAchievements() {
+    List<VagtAchievement> achievements = new ArrayList<>();
+    
+    // De første 10 achievements (1-10 kills)
+    for (int i = 1; i <= 10; i++) {
+        double bonus = 0.05 + ((i - 1) * 0.02);
+        achievements.add(new VagtAchievement(
+            "achievement_kill_" + i,
+            "Dræb " + i + " spiller" + (i == 1 ? "" : "e"),
+            i,
+            bonus
+        ));
+    }
+    
+    // Fra 15 til 100 med spring på 5
+    for (int i = 15; i <= 100; i += 5) {
+        double bonus = 0.25 + ((i - 15) / 5.0) * 0.05;
+        achievements.add(new VagtAchievement(
+            "achievement_kill_" + i,
+            "Dræb " + i + " spillere",
+            i,
+            bonus
+        ));
+    }
+    
+    return achievements;
+}
+
+private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kills, int required, double bonusPercent) {
+    String achievementKey = "achievement_kill_" + required;
+    if (kills >= required && !profile.hasProperty(achievementKey)) {
+        profile.setProperty(achievementKey, true);
+        profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
+        // Fjern wait() og notify() kald
+        p.sendMessage("§aNyt Achievement: §6Dræbte " + required + " spillere!");
+        p.sendMessage("§7Du har fået §a+" + bonusPercent + "% §7bonus til din løn!");
+    }
+}
+
+public double calculateTotalSalaryBonus(PlayerProfile profile) {
+    if (profile == null) return 0.0;
+    
+    double totalBonus = 0.0;
+    
+    // Check kill achievements
+    for (VagtAchievement achievement : initializeKillAchievements()) {
+        String property = achievement.property;
+        String bonusProperty = property + "_bonus";
+        
+        if (profile.hasProperty(property) && profile.hasProperty(bonusProperty)) {
+            try {
+                String bonusValue = profile.getProperty(bonusProperty).toString();
+                if (bonusValue != null) {
+                    totalBonus += Double.parseDouble(bonusValue);
+                }
+            } catch (NumberFormatException e) {
+                logger.warning("Ugyldig bonus værdi for achievement: " + property);
+            }
         }
     }
+    
+    return totalBonus;
+}
 
-    public double calculateTotalSalaryBonus(PlayerProfile profile) {
-        double totalBonus = 0.0;
-        
-
-        for (int i = 1; i <= 10; i++) {
-            String property = "achievement_kill_" + i;
-            if (profile.hasProperty(property)) {
-                String bonusProperty = property + "_bonus";
-                String bonusValue = profile.getProperty(bonusProperty).toString();
-                if (bonusValue != null) {
-                    try {
-                        totalBonus += Double.parseDouble(bonusValue);
-                    } catch (NumberFormatException e) {
-                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
-                    }
-                }
-            }
-        }
-        
-
-        for (int i = 15; i <= 100; i += 5) {
-            String property = "achievement_kill_" + i;
-            if (profile.hasProperty(property)) {
-                String bonusProperty = property + "_bonus";
-                String bonusValue = profile.getProperty(bonusProperty).toString();
-                if (bonusValue != null) {
-                    try {
-                        totalBonus += Double.parseDouble(bonusValue);
-                    } catch (NumberFormatException e) {
-                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
-                    }
-                }
-            }
-        }
-        
-
-        for (int i = 125; i <= 250; i += 25) {
-            String property = "achievement_kill_" + i;
-            if (profile.hasProperty(property)) {
-                String bonusProperty = property + "_bonus";
-                String bonusValue = profile.getProperty(bonusProperty).toString();
-                if (bonusValue != null) {
-                    try {
-                        totalBonus += Double.parseDouble(bonusValue);
-                    } catch (NumberFormatException e) {
-                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
-                    }
-                }
-            }
-        }
-        
-
-        for (int i = 300; i <= 500; i += 50) {
-            String property = "achievement_kill_" + i;
-            if (profile.hasProperty(property)) {
-                String bonusProperty = property + "_bonus";
-                String bonusValue = profile.getProperty(bonusProperty).toString();
-                if (bonusValue != null) {
-                    try {
-                        totalBonus += Double.parseDouble(bonusValue);
-                    } catch (NumberFormatException e) {
-                        plugin.getLogger().warning("Ugyldig bonus værdi for " + bonusProperty + ": " + bonusValue);
-                    }
-                }
-            }
-        }
-        
-        return totalBonus;
-    }
-private static class VagtAchievement {
+    private static class VagtAchievement {
     private final String property;
     private final String description;
     private final int requiredAmount;
@@ -249,21 +234,20 @@ private static class VagtAchievement {
     }
 }
 private List<VagtAchievement> initializeDamageAchievements() {
-    List<VagtAchievement> achievementList = new ArrayList<>();
-    double currentBonus = 0.001;
+    List<VagtAchievement> achievements = new ArrayList<>();
+    achievements.add(new VagtAchievement("damage_achievement_1000", "Deal 1000 damage", 1000, 5.0));
+    achievements.add(new VagtAchievement("damage_achievement_5000", "Deal 5000 damage", 5000, 10.0));
+    achievements.add(new VagtAchievement("damage_achievement_10000", "Deal 10000 damage", 10000, 15.0));
+    return achievements;
+}
+private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int damage, int required, double bonusPercent) throws InterruptedException {
+    String achievementProperty = "damage_achievement_" + required;
     
-    // Start med 5 damage og forøg med 15
-    for (int damage = 5; damage <= 500; damage += 15) {
-        achievementList.add(new VagtAchievement(
-            "achievement_damage_" + damage,
-            "Giv " + damage + " damage",
-            damage,
-            currentBonus
-        ));
-        // Fordobl bonus for hvert niveau
-        currentBonus *= 2;
+    if (damage >= required && !profile.hasProperty(achievementProperty)) {
+        profile.setProperty(achievementProperty, "true");
+        profile.setProperty(achievementProperty + "_bonus", String.valueOf(bonusPercent));
+        p.sendMessage("§aNew Achievement: §6Dealt " + required + " damage!");
+        p.sendMessage("§7Du har fået §a+" + bonusPercent + "% §7bonus til din løn!");
     }
-    
-    return achievementList;
 }
 }

@@ -153,8 +153,7 @@ public class VagtChestManager implements Listener {
 
         inv.clear();
 
-        // Fjern denne betingelse midlertidigt for at se om beskeden bliver vist
-        //if (totalMoney > 0) {
+
         player.sendMessage("§7Debug: Forsøger at vise besked med total: " + totalMoney);
         try {
             if (totalMoney > 0) {
@@ -175,6 +174,6 @@ public class VagtChestManager implements Listener {
             player.sendMessage("§cDer skete en fejl: " + e.getMessage());
             e.printStackTrace();
         }
-        //}
+
     }
 }
