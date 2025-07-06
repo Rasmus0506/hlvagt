@@ -82,10 +82,8 @@ public class OnJoin implements Listener {
     }
 
     private void setCooldownTime(Player p) {
-        if (time == 0) {
-            time = settings.getLonTime();
-        }
-        putPlayerInPlayerMap(p);
+        // Brug settings.getLonTime() direkte i stedet for at gemme i time variabel
+        playerCooldownTime.put(p.getUniqueId(), settings.getLonTime());
     }
 
     private void putPlayerInPlayerMap(Player p) {

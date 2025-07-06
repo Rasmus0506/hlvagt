@@ -8,18 +8,18 @@ import com.gmail.markushygedombrowski.vagtMenu.subMenu.*;
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.topVagter.TopVagterGUI;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -70,62 +70,49 @@ public class MainMenu implements Listener {
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
         try {
-            Player p = (Player) event.getWhoClicked();
-            Inventory inventory = event.getClickedInventory();
-            ItemStack clickeditem = event.getCurrentItem();
-            int clickedSlot = event.getRawSlot();
-            if (clickeditem == null) {
+            if (!(event.getWhoClicked() instanceof Player)) {
                 return;
             }
-            if (inventory.getTitle().equalsIgnoreCase("§cVagt Menu §8" + p.getName())) {
+
+            Player p = (Player) event.getWhoClicked();
+            String title = event.getView().getTitle();
+
+            if (title.contains("Vagt Menu") || title.contains("§cVagt")) {
+                event.setCancelled(true);
+
+                int clickedSlot = event.getSlot();
 
                 switch (clickedSlot) {
-                    case PV_INDEX:
-                        pvgui.create(p);
-                        break;
-                    case RANKUP_INDEX:
-                        if (p.hasPermission("a-vagt") || p.hasPermission("officer") || p.hasPermission("viceinspektør") || p.hasPermission("inspektør") || p.hasPermission("direktør")) {
-                            p.sendMessage("§aDu kan ikke ranke up mere!");
-                            break;
-                        } else if (p.hasPermission("p-vagt")) {
-                            p.sendMessage("§cDu kan ikke rankup som P-vagt!!");
-                            break;
-                        }
-                        rankupGUI.create(p);
-                        break;
                     case L0N_INDEX:
                         if (VagtCooldown.isCooling(p.getName(), "lon")) {
-                            VagtCooldown.coolDurMessage(p, "lon");
-                            System.out.println("Cooldown");
-                            break;
+                            double remaining = VagtCooldown.getRemaining(p.getName(), "lon");
+                            int minutes = (int) (remaining / 60);
+                            int seconds = (int) (remaining % 60);
+                            p.sendMessage(ChatColor.RED + "Du skal vente " + ChatColor.YELLOW + minutes + " minutter og " + seconds + " sekunder" + ChatColor.RED + " før du kan få løn igen!");
+                        } else {
+                            plugin.getLon().giveLon(p);
                         }
-                        System.out.println("no cooldown");
                         break;
-                    case TOPVAGT_INDEX:
-                        topVagterGUI.create(p);
+                    case PV_INDEX:
+                        pvgui.create(p);
                         break;
                     case STATS_INDEX:
                         statsGUI.create(p);
                         break;
-                    case VAGTLVL_INDEX:
-                        vagtLevelGUI.openVagtLevelGUI(p, 1);
-                        break;
-                    case SETTINGS_INDEX:
+                    case TOPVAGT_INDEX:
+                        topVagterGUI.create(p);
                         break;
                     case ACHIVEMENT_INDEX:
                         achievementsGUI.openMenu(p);
-                        if (event.getView().getTitle().equals(achievementsGUI)) {
-                            event.setCancelled(true);
-                            event.setResult(Event.Result.DENY);
-                        }
-
+                        break;
+                    case RANKUP_INDEX:
+                        rankupGUI.create(p);
+                        break;
+                    case VAGTLVL_INDEX:
+                        vagtLevelGUI.openVagtLevelGUI(p);
                         break;
                 }
-
-                event.setCancelled(true);
-                event.setResult(Event.Result.DENY);
             }
-
         } catch (NullPointerException e) {
             plugin.getLogger().warning("NullPointerException i MainMenu.onClickEvent: " + e.getMessage());
         }
@@ -254,13 +241,14 @@ public class MainMenu implements Listener {
         });
 
     }
+
     private ItemStack createDamageMenuButton(Player player) {
         ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta meta = sword.getItemMeta();
         meta.setDisplayName("§6⚔ Damage Achievements ⚔");
 
         List<String> lore = new ArrayList<>();
-        // Konvertér damage til positive tal og del med 10 for at få hjerter
+
         double totalDamage = Math.abs(player.getStatistic(Statistic.DAMAGE_DEALT)) / 10.0;
         lore.add("§7Total damage givet: §6" + String.format("%.1f", totalDamage) + " hjerter");
         lore.add("");
@@ -270,7 +258,7 @@ public class MainMenu implements Listener {
         int achieved = 0;
         int total = 10;
 
-        // Tæl opnåede damage achievements
+
         for (int i = 5; i <= 140; i += 15) {
             String achievementKey = "achievement_damage_" + i;
             if (profile != null && profile.hasProperty(achievementKey)) {
@@ -285,5 +273,13 @@ public class MainMenu implements Listener {
         meta.setLore(lore);
         sword.setItemMeta(meta);
         return sword;
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        String title = event.getView().getTitle();
+        if (title.contains("Vagt Menu") || title.contains("§cVagt")) {
+            event.setCancelled(true);
+        }
     }
 }

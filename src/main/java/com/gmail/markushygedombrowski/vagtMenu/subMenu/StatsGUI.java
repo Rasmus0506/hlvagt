@@ -80,11 +80,19 @@ public class StatsGUI implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        Player p = (Player) event.getWhoClicked();
+        if (!(event.getWhoClicked() instanceof Player)) {
+            return;
+        }
+        
         if (event.getClickedInventory() == null) {
             return;
         }
-        if (event.getClickedInventory().getTitle().equals("§a§lStats")) {
+        
+        if (event.getCurrentItem() == null) {
+            return;
+        }
+        
+        if (event.getView().getTitle().equals("§a§lStats")) {
             event.setCancelled(true);
             event.setResult(InventoryClickEvent.Result.DENY);
         }

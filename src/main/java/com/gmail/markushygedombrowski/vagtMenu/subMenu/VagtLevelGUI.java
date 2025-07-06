@@ -4,7 +4,6 @@ import com.gmail.markushygedombrowski.levels.LevelManager;
 import com.gmail.markushygedombrowski.levels.Levels;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
-import net.citizensnpcs.trait.WoolColor;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -34,9 +33,9 @@ public class VagtLevelGUI implements Listener {
     private final int NEXT_PAGE = 53;
     private final int PREV_PAGE = 45;
 
-    public void openVagtLevelGUI(Player p, int currentPage) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "§2Vagt Level side " + currentPage);
-        playerPageNumbers.put(p.getUniqueId(), currentPage);
+    public void openVagtLevelGUI(Player p) {
+        Inventory inventory = Bukkit.createInventory(null, 54, "§2Vagt Level side " + NEXT_PAGE);
+        playerPageNumbers.put(p.getUniqueId(), NEXT_PAGE);
         inventory.setItem(NEXT_PAGE, createItem(p, Material.ARROW, "§aNæste side", null));
 
         for (int i = 9; i < 45; i++) {

@@ -3,8 +3,11 @@ package com.gmail.markushygedombrowski.achievements;
 import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
+import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,8 +153,12 @@ public class VagtAchievements {
             checkSingleKillAchievement(p, profile, kills, i, bonus);
         }
 
-        for (int i = 150; i <= 300; i += 50) {
+        for (int i = 300; i <= 600; i += 50) {
             double bonus = 1.0 + ((i - 150) / 50.0) * 0.25;
+            checkSingleKillAchievement(p, profile, kills, i, bonus);
+        }
+        for (int i = 1000; i <= 800; i += 60) {
+            double bonus = 1.0 + ((i - 1000) / 60.0) * 0.30;
             checkSingleKillAchievement(p, profile, kills, i, bonus);
         }
     }
@@ -166,7 +173,8 @@ private List<VagtAchievement> initializeKillAchievements() {
             "achievement_kill_" + i,
             "Dræb " + i + " spiller" + (i == 1 ? "" : "e"),
             i,
-            bonus
+            bonus,
+             "kill"
         ));
     }
     
@@ -177,7 +185,8 @@ private List<VagtAchievement> initializeKillAchievements() {
             "achievement_kill_" + i,
             "Dræb " + i + " spillere",
             i,
-            bonus
+            bonus,
+             "kill"
         ));
     }
     
@@ -196,49 +205,78 @@ private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kil
 }
 
 public double calculateTotalSalaryBonus(PlayerProfile profile) {
-    if (profile == null) return 0.0;
-    
     double totalBonus = 0.0;
-    
-    // Check kill achievements
-    for (VagtAchievement achievement : initializeKillAchievements()) {
-        String property = achievement.property;
-        String bonusProperty = property + "_bonus";
-        
-        if (profile.hasProperty(property) && profile.hasProperty(bonusProperty)) {
-            try {
-                String bonusValue = profile.getProperty(bonusProperty).toString();
-                if (bonusValue != null) {
-                    totalBonus += Double.parseDouble(bonusValue);
-                }
-            } catch (NumberFormatException e) {
-                logger.warning("Ugyldig bonus værdi for achievement: " + property);
-            }
+    // Kill achievements
+    for (int i = 1; i <= 1000; i++) {
+        String bonusKey = "achievement_kill_" + i + "_bonus";
+        if (profile.hasProperty(bonusKey)) {
+            totalBonus += Double.parseDouble((String) profile.getProperty(bonusKey));
         }
     }
-    
+    // Damage achievements
+    for (int i = 5; i <= 200; i += 15) {
+        String bonusKey = "achievement_damage_" + i + "_bonus";
+        if (profile.hasProperty(bonusKey)) {
+            totalBonus += Double.parseDouble((String) profile.getProperty(bonusKey));
+        }
+    }
     return totalBonus;
 }
 
     private static class VagtAchievement {
     private final String property;
     private final String description;
+    private final int requiredDeaths;
+    private final double penaltyPercent;
     private final int requiredAmount;
     private final double percentModifier;
+        private final String type;
 
-    public VagtAchievement(String property, String description, int requiredAmount, double percentModifier) {
+    public VagtAchievement(String property, String description, int requiredAmount, double modifier, String type) {
         this.property = property;
         this.description = description;
+        this.requiredDeaths = requiredAmount;
+        this.penaltyPercent = modifier;
         this.requiredAmount = requiredAmount;
-        this.percentModifier = percentModifier;
+        this.percentModifier = modifier;
+        this.type = type;
     }
 }
 private List<VagtAchievement> initializeDamageAchievements() {
-    List<VagtAchievement> achievements = new ArrayList<>();
-    achievements.add(new VagtAchievement("damage_achievement_1000", "Deal 1000 damage", 1000, 5.0));
-    achievements.add(new VagtAchievement("damage_achievement_5000", "Deal 5000 damage", 5000, 10.0));
-    achievements.add(new VagtAchievement("damage_achievement_10000", "Deal 10000 damage", 10000, 15.0));
-    return achievements;
+    List<VagtAchievement> achievementList = new ArrayList<>();
+    double currentBonus = 0.001;
+    
+    // Start med 5 damage og forøg med 15
+    for (int damage = 5; damage <= 500; damage += 15) {
+        achievementList.add(new VagtAchievement(
+            "achievement_damage_" + damage,
+            "Giv " + damage + " damage",
+            damage,
+            currentBonus,
+            "damage"
+        ));
+        currentBonus *= 2; // Fordobl bonus for hvert niveau
+    }
+    
+    return achievementList;
+}
+public void checkDamageAchievements(Player player) throws InterruptedException {
+    PlayerProfile profile = playerProfiles.getPlayerProfile(player.getUniqueId());
+    int totalDamage = profile.castPropertyToInt(profile.getProperty("total_damage"));
+
+    // Få listen af damage achievements
+    List<VagtAchievement> achievements = initializeDamageAchievements();
+    
+    // Check hvert achievement
+    for (VagtAchievement achievement : achievements) {
+        checkSingleDamageAchievement(
+            player,
+            profile,
+            totalDamage,
+            achievement.requiredAmount,
+            achievement.percentModifier
+        );
+    }
 }
 private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int damage, int required, double bonusPercent) throws InterruptedException {
     String achievementProperty = "damage_achievement_" + required;
@@ -249,5 +287,40 @@ private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int d
         p.sendMessage("§aNew Achievement: §6Dealt " + required + " damage!");
         p.sendMessage("§7Du har fået §a+" + bonusPercent + "% §7bonus til din løn!");
     }
+}
+private ItemStack createDamageAchievementItem(int currentDamage, PlayerProfile profile, VagtAchievement achievement) {
+    HeadDatabaseAPI hdb = new HeadDatabaseAPI();
+    ItemStack item;
+    boolean completed = currentDamage >= achievement.requiredAmount;
+    
+    if (completed && profile.hasProperty(achievement.property)) {
+        item = hdb.getItemHead("21774");
+    } else {
+        item = hdb.getItemHead("9382");
+    }
+    
+    ItemMeta meta = item.getItemMeta();
+    String color = completed ? "§a" : "§c";
+    meta.setDisplayName(color + achievement.description);
+
+    List<String> lore = new ArrayList<>();
+    lore.add("§7Krav: §f" + achievement.requiredAmount + " damage");
+    lore.add("§7Bonus: §a+" + String.format("%.3f", achievement.percentModifier) + "% §7af din bonus løn");
+    lore.add("");
+    lore.add("§7Nuværende damage: §f" + currentDamage);
+
+    if (completed) {
+        if (profile.hasProperty(achievement.property)) {
+            lore.add("§a✓ Achievement opnået");
+        } else {
+            lore.add("§e⚠ Mangler at blive registreret");
+        }
+    } else {
+        lore.add("§c✗ Mangler " + (achievement.requiredAmount - currentDamage) + " damage");
+    }
+
+    meta.setLore(lore);
+    item.setItemMeta(meta);
+    return item;
 }
 }

@@ -11,9 +11,6 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-// ... andre imports ...
-// Fjern import java.util.concurrent.TimeUnit og brug din egen TimeUnit enum i stedet
-import com.gmail.markushygedombrowski.cooldown.TimeUnit;
 
 public class VagtCooldown {
     private Lon lon;
@@ -46,13 +43,13 @@ public class VagtCooldown {
                     for (String ability : cooldownConfig.getConfigurationSection("cooldowns." + player).getKeys(false)) {
                         long endTime = cooldownConfig.getLong("cooldowns." + player + "." + ability + ".endTime");
                         long duration = cooldownConfig.getLong("cooldowns." + player + "." + ability + ".duration");
-                        
+
                         if (endTime > System.currentTimeMillis()) {
                             if (!cooldownPlayers.containsKey(player)) {
                                 cooldownPlayers.put(player, new VagtAbilityCooldown(player));
                             }
-                            cooldownPlayers.get(player).cooldownMap.put(ability, 
-                                new VagtAbilityCooldown(player, duration, System.currentTimeMillis() - (endTime - duration)));
+                            cooldownPlayers.get(player).cooldownMap.put(ability,
+                                    new VagtAbilityCooldown(player, duration, System.currentTimeMillis() - (endTime - duration)));
                         }
                     }
                 }
@@ -86,7 +83,6 @@ public class VagtCooldown {
         saveCooldowns();
     }
 
-    // ... resten af dine eksisterende metoder ...
 
     public void handleCooldowns() {
         if (cooldownPlayers == null || cooldownPlayers.isEmpty()) {
@@ -97,28 +93,28 @@ public class VagtCooldown {
                 return;
             }
             abilityCooldown.cooldownMap.entrySet().stream()
-                .filter(vagt -> getRemaining(player, vagt.getKey()) <= 0.0)
-                .forEach((cooldownEntry) -> {
-                    removeCooldownLon(player, cooldownEntry.getKey());
-                    saveCooldowns();
-                });
+                    .filter(vagt -> getRemaining(player, vagt.getKey()) <= 0.0)
+                    .forEach((cooldownEntry) -> {
+                        removeCooldownLon(player, cooldownEntry.getKey());
+                        saveCooldowns();
+                    });
         });
     }
 
     public static double getRemaining(String player, String ability) {
         if (!cooldownPlayers.containsKey(player)) return 0.0;
         if (!cooldownPlayers.get(player).cooldownMap.containsKey(ability)) return 0.0;
-        
+
         VagtAbilityCooldown cooldown = cooldownPlayers.get(player).cooldownMap.get(ability);
         long endTime = cooldown.systime + cooldown.seconds;
         long currentTime = System.currentTimeMillis();
-        
+
         if (currentTime >= endTime) {
             cooldownPlayers.get(player).cooldownMap.remove(ability);
             return 0.0;
         }
-        
-        // Konverter millisekunder til minutter
+
+
         return Math.max(0, (endTime - currentTime) / 60000.0);
     }
 
@@ -140,7 +136,7 @@ public class VagtCooldown {
     public static boolean isCooling(String player, String ability) {
         if (!cooldownPlayers.containsKey(player)) return false;
         if (!cooldownPlayers.get(player).cooldownMap.containsKey(ability)) return false;
-        
+
         VagtAbilityCooldown cooldown = cooldownPlayers.get(player).cooldownMap.get(ability);
         long endTime = cooldown.systime + cooldown.seconds;
         return System.currentTimeMillis() < endTime;
@@ -177,7 +173,6 @@ public class VagtCooldown {
                 cooldownPlayers.get(player).cooldownMap.remove(ability);
             }
         }
-
 
 
     }

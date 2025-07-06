@@ -96,13 +96,13 @@ public class HLvagt extends JavaPlugin {
         VagtUtils vagtUtils = new VagtUtils(this, playerProfiles, settings);
         System.out.println("HL Vagt enabled!!");
 
-        // Opret achievements før initVagt
+
         vagtAchievements = new com.gmail.markushygedombrowski.achievements.VagtAchievements(this, playerProfiles, logger);
         achievementsGUI = new AchievementsGUI(this);
 
-        // Registrer AchievementsListener
+
         getServer().getPluginManager().registerEvents(new AchivementsListener(this), this);
-        
+
 
         initWarps();
 
@@ -144,16 +144,16 @@ public class HLvagt extends JavaPlugin {
             }
         }, 0, 20);
 
-        // Initialiser sælge-kiste systemet
+
         sellPriceManager = new SellPriceManager(getDataFolder());
         vagtChestManager = new VagtChestManager(sellPriceManager, econ, getDataFolder());
         getServer().getPluginManager().registerEvents(vagtChestManager, this);
 
-        // Registrer sellchest kommandoen
+
         SellChestCommand sellChestCommand = new SellChestCommand(this, vagtChestManager);
         getCommand("sellchest").setExecutor(sellChestCommand);
 
-        // ... resten af din kode ...
+
     }
 
 
@@ -242,7 +242,6 @@ public class HLvagt extends JavaPlugin {
         getCommand("aktivbuff").setExecutor(aktivBuffCmd);
 
 
-
     }
 
     public void initListener() {
@@ -279,5 +278,9 @@ public class HLvagt extends JavaPlugin {
 
     public AchievementsGUI getAchievementsGUI() {
         return achievementsGUI;
+    }
+
+    public Lon getLon() {
+        return lon;
     }
 }

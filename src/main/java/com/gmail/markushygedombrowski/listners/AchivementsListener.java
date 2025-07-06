@@ -19,11 +19,13 @@ public class AchivementsListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (!player.hasPermission("vagt")) return;
+        
         try {
-            Player player = event.getPlayer();
             handleDeathAchievements(player);
             handleKillAchievements(player);
-            handleDamageAchievements(player); // Tilføj denne linje
+            handleDamageAchievements(player);
         } catch (InterruptedException e) {
             plugin.getLogger().warning("Fejl ved checking af achievement ved join: " + e.getMessage());
             e.printStackTrace();
@@ -33,14 +35,16 @@ public class AchivementsListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
+        if (!victim.hasPermission("vagt")) return;
+        
         Player killer = victim.getKiller();
         
         try {
             handleDeathAchievements(victim);
             
-            if (killer != null) {
+            if (killer != null && killer.hasPermission("vagt")) {
                 handleKillAchievements(killer);
-                handleDamageAchievements(killer); // Tilføj denne linje
+                handleDamageAchievements(killer);
             }
         } catch (InterruptedException e) {
             plugin.getLogger().warning("Fejl ved checking af achievement: " + e.getMessage());
@@ -48,29 +52,30 @@ public class AchivementsListener implements Listener {
         }
     }
 
-@EventHandler
-public void onPlayerDamage(EntityDamageByEntityEvent event) {
-    if (!(event.getDamager() instanceof Player)) {
-        return;
+    @EventHandler
+    public void onPlayerDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player)) return;
+        
+        Player damager = (Player) event.getDamager();
+        if (!damager.hasPermission("vagt")) return;
+        
+        double damage = event.getFinalDamage();
+        
+        PlayerProfile profile = plugin.getPlayerProfile(damager.getUniqueId());
+        int currentDamage = profile.castPropertyToInt(profile.getProperty("damage_dealt"));
+        profile.setProperty("damage_dealt", String.valueOf(currentDamage + (int)damage));
+        
+        try {
+            handleDamageAchievements(damager);
+        } catch (InterruptedException e) {
+            plugin.getLogger().warning("Fejl ved damage achievement check: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-    Player damager = (Player) event.getDamager();
-    double damage = event.getFinalDamage();
-    
-    // Gem damage i spillerens statistik
-    PlayerProfile profile = plugin.getPlayerProfile(damager.getUniqueId());
-    int currentDamage = profile.castPropertyToInt(profile.getProperty("damage_dealt"));
-    profile.setProperty("damage_dealt", String.valueOf(currentDamage + (int)damage));
-    
-    // Check achievements
-    try {
-        handleDamageAchievements(damager);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
-}
 
-    private void handleDeathAchievements(Player player) throws InterruptedException {
-        PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
+    // ... resten af metoderne forbliver uændrede ...
+private void handleDeathAchievements(Player player) throws InterruptedException {
+    PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
         int deaths = player.getStatistic(Statistic.DEATHS);
 
         checkSingleDeathAchievement(player, profile, deaths, 1, 0.05);
@@ -117,8 +122,12 @@ public void onPlayerDamage(EntityDamageByEntityEvent event) {
             checkSingleKillAchievement(player, profile, kills, i, bonus);
         }
 
-        for (int i = 300; i <= 500; i += 50) {
-            double bonus = 1.80 + ((i - 300) / 50.0) * 0.25;
+        for (int i = 300; i <= 600; i += 50) {
+            double bonus = 1.0 + ((i - 150) / 50.0) * 0.25;
+            checkSingleKillAchievement(player, profile, kills, i, bonus);
+        }
+        for (int i = 1000; i <= 800; i += 60) {
+            double bonus = 1.0 + ((i - 1000) / 60.0) * 0.30;
             checkSingleKillAchievement(player, profile, kills, i, bonus);
         }
     }
@@ -182,13 +191,10 @@ private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int d
     if (damage >= required && !profile.hasProperty(achievementKey)) {
         profile.setProperty(achievementKey, true);
         profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
+        profile.wait(); // Tilføj denne linje for at sikre data gemmes
         
-        // Send besked til spilleren
         p.sendMessage("§6⚔ Achievement opnået: §7Giv " + required + " damage");
         p.sendMessage("§7Du har fået en bonus på §a+" + String.format("%.3f", bonusPercent) + "% §7til din løn");
-        
-        // Log achievement
-        plugin.getLogger().info(p.getName() + " har opnået damage achievement: " + achievementKey);
     }
 }
 }
