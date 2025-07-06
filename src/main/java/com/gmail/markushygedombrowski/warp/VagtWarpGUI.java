@@ -3,7 +3,7 @@ package com.gmail.markushygedombrowski.warp;
 
 import com.gmail.markushygedombrowski.inventory.ChangeInvOnWarp;
 import com.gmail.markushygedombrowski.inventory.InvHolder;
-import com.gmail.markushygedombrowski.utils.Utils;
+import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import com.gmail.markushygedombrowski.utils.VagtUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -26,11 +26,14 @@ public class VagtWarpGUI implements Listener {
     private final int WARP_CVCELLESTUE_INDEX = 29;
     private final int WARP_BVCELLESTUE_INDEX = 31;
     private final int WARP_AVAGTCELLER_INDEX = 33;
+    private final int WARP_APLUS_INDEX = 25;
     private final ChangeInvOnWarp changeInvOnWarp;
+    private final PlayerProfiles playerProfiles;
 
-    public VagtWarpGUI(VagtSpawnManager vagtSpawnManager, ChangeInvOnWarp changeInvOnWarp) {
+    public VagtWarpGUI(VagtSpawnManager vagtSpawnManager, ChangeInvOnWarp changeInvOnWarp, PlayerProfiles playerProfiles) {
         this.vagtSpawnManager = vagtSpawnManager;
         this.changeInvOnWarp = changeInvOnWarp;
+        this.playerProfiles = playerProfiles;
     }
 
     public void create(Player p, String block) {
@@ -134,6 +137,16 @@ public class VagtWarpGUI implements Listener {
 
     private void warpPlayer(Player p, String warpName, String message) {
         p.sendMessage(message);
-        p.teleport(vagtSpawnManager.getWarpInfo(warpName).getLocation());
+        VagtSpawnInfo spawnInfo = vagtSpawnManager.getWarpInfo(warpName);
+        if (spawnInfo != null) {
+            p.teleport(spawnInfo.getLocation());
+            InvHolder invHolder = changeInvOnWarp.getInventory(p.getUniqueId(), warpName);
+            if (invHolder != null) {
+                p.getInventory().setContents(invHolder.getInventory());
+                p.getInventory().setArmorContents(invHolder.getGear());
+                p.sendMessage("Du har skiftet gear");
+                return;
+            }
+        }
     }
 }

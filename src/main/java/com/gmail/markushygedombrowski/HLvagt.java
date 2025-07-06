@@ -168,7 +168,7 @@ public class HLvagt extends JavaPlugin {
         VagtSpawnCommand vagtSpawnCommand = new VagtSpawnCommand(vagtSpawnManager, this);
         getCommand("vagtspawn").setExecutor(vagtSpawnCommand);
         changeInvOnWarp = vagtProfiler.getChangeInventory();
-        VagtWarpGUI vagtWarpGUI = new VagtWarpGUI(vagtSpawnManager, changeInvOnWarp);
+        VagtWarpGUI vagtWarpGUI = new VagtWarpGUI(vagtSpawnManager, changeInvOnWarp, playerProfiles);
         Warpsign warpsign = new Warpsign(vagtWarpGUI);
         Bukkit.getPluginManager().registerEvents(vagtWarpGUI, this);
         Bukkit.getPluginManager().registerEvents(warpsign, this);
