@@ -55,7 +55,7 @@ public class Lon {
         }
 
 
-        if (VagtCooldown.isCooling(p.getName(), "lon")) {
+if (VagtCooldown.isCooling(p.getName(), "lon")) {
             double remaining = VagtCooldown.getRemaining(p.getName(), "lon");
             int minutes = (int) (remaining / 60);
             int seconds = (int) (remaining % 60);

@@ -85,13 +85,13 @@ public class MainMenu implements Listener {
                 switch (clickedSlot) {
                     case L0N_INDEX:
                         if (VagtCooldown.isCooling(p.getName(), "lon")) {
-                            double remaining = VagtCooldown.getRemaining(p.getName(), "lon");
-                            int minutes = (int) (remaining / 60);
-                            int seconds = (int) (remaining % 60);
-                            p.sendMessage(ChatColor.RED + "Du skal vente " + ChatColor.YELLOW + minutes + " minutter og " + seconds + " sekunder" + ChatColor.RED + " før du kan få løn igen!");
+                            VagtCooldown.coolDurMessage(p, "lon");
+                            return;
                         } else {
                             plugin.getLon().giveLon(p);
                         }
+                        // Opdater GUI'en efter handling
+                        meta(p, plugin.getPlayerProfile(p.getUniqueId()), event.getInventory());
                         break;
                     case PV_INDEX:
                         pvgui.create(p);

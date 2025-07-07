@@ -154,6 +154,10 @@ public class HLvagt extends JavaPlugin {
         getCommand("sellchest").setExecutor(sellChestCommand);
 
 
+        // Tilføj automatisk gem hver 5. minut
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            VagtCooldown.saveCooldowns();
+        }, 6000L, 6000L); // 6000 ticks = 5 minutter
     }
 
 

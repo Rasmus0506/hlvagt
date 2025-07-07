@@ -114,8 +114,8 @@ public class VagtCooldown {
             return 0.0;
         }
 
-
-        return Math.max(0, (endTime - currentTime) / 60000.0);
+        double remainingSeconds = (endTime - currentTime) / 1000.0; // Konverter til sekunder
+        return remainingSeconds / 60.0; // Konverter til minutter
     }
 
     public static void coolDurMessage(Player player, String ability) {
@@ -126,10 +126,10 @@ public class VagtCooldown {
             return;
         }
         if (ability.equalsIgnoreCase("lon")) {
-            double minutes = getRemaining(player.getName(), ability);
-            int wholeMinutes = (int) Math.floor(minutes);
-            int seconds = (int) ((minutes - wholeMinutes) * 60);
-            player.sendMessage(ChatColor.GRAY + " Du får løn om " + ChatColor.AQUA + wholeMinutes + " minutter og " + seconds + " sekunder");
+            double totalSeconds = getRemaining(player.getName(), ability) * 60; // Konverter minutter til sekunder
+            int wholeMinutes = (int) (totalSeconds / 60);
+            int seconds = (int) (totalSeconds % 60);
+            player.sendMessage(ChatColor.GRAY + " du får løn om " + ChatColor.AQUA + getRemaining(player.getName(), ability) + " Minuter");
         }
     }
 
@@ -140,6 +140,7 @@ public class VagtCooldown {
         VagtAbilityCooldown cooldown = cooldownPlayers.get(player).cooldownMap.get(ability);
         long endTime = cooldown.systime + cooldown.seconds;
         return System.currentTimeMillis() < endTime;
+
     }
 
     public static boolean removeCooldown(String player, String ability) {

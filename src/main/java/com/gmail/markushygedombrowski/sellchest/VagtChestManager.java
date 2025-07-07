@@ -26,7 +26,7 @@ public class VagtChestManager implements Listener {
     private final Set<Location> sellChests;
     private final File chestsFile;
     private final FileConfiguration chestsConfig;
-    private static final String CHEST_TITLE = "§cVagt Sælge Kiste";
+    private static final String CHEST_TITLE = "§cSælge Kiste";
 
     public VagtChestManager(SellPriceManager priceManager, Economy economy, File dataFolder) {
         this.priceManager = priceManager;
@@ -100,7 +100,14 @@ public class VagtChestManager implements Listener {
         if (!sellChests.contains(chestLoc)) return;
 
         event.setCancelled(true);
-        openSellMenu(event.getPlayer());
+        
+        // Tilføj tjek for items i hånden
+        if (event.hasItem()) {
+            openSellMenu(event.getPlayer());
+        } else {
+            // Hvis spilleren ikke har et item i hånden, åben menuen alligevel
+            openSellMenu(event.getPlayer());
+        }
     }
 
     private void openSellMenu(Player player) {
