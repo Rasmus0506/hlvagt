@@ -2,6 +2,7 @@ package com.gmail.markushygedombrowski.listners;
 
 import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
+import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,11 +11,15 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.sql.SQLException;
+
 public class AchivementsListener implements Listener {
     private final HLvagt plugin;
+    private final PlayerProfiles playerProfiles;
 
-    public AchivementsListener(HLvagt plugin) {
+    public AchivementsListener(HLvagt plugin, PlayerProfiles playerProfiles) {
         this.plugin = plugin;
+        this.playerProfiles = playerProfiles;
     }
 
     @EventHandler
@@ -137,8 +142,12 @@ private void checkSingleDeathAchievement(Player p, PlayerProfile profile, int de
     if (deaths >= required && !profile.hasProperty(achievementKey)) {
         profile.setProperty(achievementKey, true);
         profile.setProperty(achievementKey + "_penalty", String.valueOf(penaltyPercent));
-        profile.wait();
-        
+        try {
+            playerProfiles.save(profile);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         // Send besked til spilleren
         p.sendMessage("§c☠ Achievement opnået: §7Dø " + required + " gang(e)");
         p.sendMessage("§7Du har fået en straf på §c-" + String.format("%.2f", penaltyPercent) + "% §7af din løn");
@@ -153,7 +162,11 @@ private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kil
     if (kills >= required && !profile.hasProperty(achievementKey)) {
         profile.setProperty(achievementKey, true);
         profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
-        profile.wait();
+        try {
+            playerProfiles.save(profile);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         // Send besked til spilleren
         p.sendMessage("§a☠ Achievement opnået: §7Dræb " + required + " spiller(e)");
@@ -191,7 +204,11 @@ private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int d
     if (damage >= required && !profile.hasProperty(achievementKey)) {
         profile.setProperty(achievementKey, true);
         profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
-        profile.wait(); // Tilføj denne linje for at sikre data gemmes
+        try {
+            playerProfiles.save(profile);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         
         p.sendMessage("§6⚔ Achievement opnået: §7Giv " + required + " damage");
         p.sendMessage("§7Du har fået en bonus på §a+" + String.format("%.3f", bonusPercent) + "% §7til din løn");

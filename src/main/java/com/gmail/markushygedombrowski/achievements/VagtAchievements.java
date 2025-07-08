@@ -1,4 +1,4 @@
-package com.gmail.markushygedombrowski.achievements;
+/* package com.gmail.markushygedombrowski.achievements;
 
 import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
@@ -323,4 +323,110 @@ private ItemStack createDamageAchievementItem(int currentDamage, PlayerProfile p
     item.setItemMeta(meta);
     return item;
 }
+} */
+package com.gmail.markushygedombrowski.achievements;
+
+import com.gmail.markushygedombrowski.HLvagt;
+import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
+import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
+import org.bukkit.Statistic;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+public class VagtAchievements {
+    private final HLvagt plugin;
+    private final PlayerProfiles playerProfiles;
+    private final Logger logger;
+
+    public VagtAchievements(HLvagt plugin, PlayerProfiles playerProfiles, Logger logger) {
+        this.plugin = plugin;
+        this.playerProfiles = playerProfiles;
+        this.logger = logger;
+    }
+
+    public void checkDeathAchievement(Player p) {
+        PlayerProfile profile = playerProfiles.getPlayerProfile(p.getUniqueId());
+        int deaths = p.getStatistic(Statistic.DEATHS);
+
+        checkAchievements(p, profile, deaths, "achievement_death_", this::calculateDeathPenalty);
+    }
+
+    public void checkKillAchievement(Player p) {
+        PlayerProfile profile = playerProfiles.getPlayerProfile(p.getUniqueId());
+        int kills = p.getStatistic(Statistic.PLAYER_KILLS);
+
+        checkAchievements(p, profile, kills, "achievement_kill_", this::calculateKillBonus);
+    }
+
+    private void checkAchievements(Player p, PlayerProfile profile, int stat, String prefix, AchievementModifier modifier) {
+        for (AchievementRange range : getAchievementRanges()) {
+            int required = range.requiredAmount;
+            double modifierValue = modifier.calculateModifier(required);
+
+            String achievementKey = prefix + required;
+            if (stat >= required && !profile.hasProperty(achievementKey)) {
+                profile.setProperty(achievementKey, true);
+                profile.setProperty(achievementKey + "_modifier", String.valueOf(modifierValue));
+                p.sendMessage("§aNew Achievement: §6" + range.description);
+                p.sendMessage("§7You received §a+" + modifierValue + "% §7modifier!");
+            }
+        }
+    }
+
+    public double calculateTotalModifier(PlayerProfile profile, String prefix) {
+        double totalModifier = 0.0;
+
+        for (AchievementRange range : getAchievementRanges()) {
+            String key = prefix + range.requiredAmount;
+            String modifierKey = key + "_modifier";
+
+            if (profile.hasProperty(key) && profile.hasProperty(modifierKey)) {
+                try {
+                    totalModifier += Double.parseDouble(profile.getProperty(modifierKey).toString());
+                } catch (NumberFormatException e) {
+                    logger.warning("Invalid modifier value for achievement: " + key);
+                }
+            }
+        }
+
+        return Math.min(totalModifier, 100.0);
+    }
+
+    private List<AchievementRange> getAchievementRanges() {
+        List<AchievementRange> ranges = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) ranges.add(new AchievementRange(i, "Achieve " + i));
+        for (int i = 15; i <= 100; i += 5) ranges.add(new AchievementRange(i, "Achieve " + i));
+        for (int i = 125; i <= 250; i += 25) ranges.add(new AchievementRange(i, "Achieve " + i));
+        for (int i = 150; i <= 300; i += 50) ranges.add(new AchievementRange(i, "Achieve " + i));
+        return ranges;
+    }
+
+    private double calculateDeathPenalty(int required) {
+        if (required <= 10) return 0.05 + ((required - 1) * 0.02);
+        if (required <= 100) return 0.25 + ((required - 15) / 5.0) * 0.05;
+        if (required <= 250) return 1.0 + ((required - 125) / 25.0) * 0.15;
+        return 1.0 + ((required - 150) / 50.0) * 0.25;
+    }
+
+    private double calculateKillBonus(int required) {
+        return calculateDeathPenalty(required); // Same logic for kills and deaths
+    }
+
+    private static class AchievementRange {
+        private final int requiredAmount;
+        private final String description;
+
+        public AchievementRange(int requiredAmount, String description) {
+            this.requiredAmount = requiredAmount;
+            this.description = description;
+        }
+    }
+
+    @FunctionalInterface
+    private interface AchievementModifier {
+        double calculateModifier(int required);
+    }
 }

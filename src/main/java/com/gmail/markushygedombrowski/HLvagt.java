@@ -46,8 +46,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.UUID;
 
 public class HLvagt extends JavaPlugin {
-    private SellPriceManager sellPriceManager;
-    private VagtChestManager vagtChestManager;
     public Economy econ = null;
     private VagtSpawnManager vagtSpawnManager;
     private Lon lon;
@@ -145,8 +143,8 @@ public class HLvagt extends JavaPlugin {
         }, 0, 20);
 
 
-        sellPriceManager = new SellPriceManager(getDataFolder());
-        vagtChestManager = new VagtChestManager(sellPriceManager, econ, getDataFolder());
+        SellPriceManager sellPriceManager = new SellPriceManager(getDataFolder());
+        VagtChestManager vagtChestManager = new VagtChestManager(sellPriceManager, econ, getDataFolder());
         getServer().getPluginManager().registerEvents(vagtChestManager, this);
 
 
