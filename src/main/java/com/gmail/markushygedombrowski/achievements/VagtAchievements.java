@@ -1,4 +1,4 @@
-/* package com.gmail.markushygedombrowski.achievements;
+package com.gmail.markushygedombrowski.achievements;
 
 import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
@@ -165,7 +165,7 @@ public class VagtAchievements {
 
 private List<VagtAchievement> initializeKillAchievements() {
     List<VagtAchievement> achievements = new ArrayList<>();
-    
+
     // De første 10 achievements (1-10 kills)
     for (int i = 1; i <= 10; i++) {
         double bonus = 0.05 + ((i - 1) * 0.02);
@@ -177,7 +177,7 @@ private List<VagtAchievement> initializeKillAchievements() {
              "kill"
         ));
     }
-    
+
     // Fra 15 til 100 med spring på 5
     for (int i = 15; i <= 100; i += 5) {
         double bonus = 0.25 + ((i - 15) / 5.0) * 0.05;
@@ -189,7 +189,7 @@ private List<VagtAchievement> initializeKillAchievements() {
              "kill"
         ));
     }
-    
+
     return achievements;
 }
 
@@ -245,7 +245,7 @@ public double calculateTotalSalaryBonus(PlayerProfile profile) {
 private List<VagtAchievement> initializeDamageAchievements() {
     List<VagtAchievement> achievementList = new ArrayList<>();
     double currentBonus = 0.001;
-    
+
     // Start med 5 damage og forøg med 15
     for (int damage = 5; damage <= 500; damage += 15) {
         achievementList.add(new VagtAchievement(
@@ -257,7 +257,7 @@ private List<VagtAchievement> initializeDamageAchievements() {
         ));
         currentBonus *= 2; // Fordobl bonus for hvert niveau
     }
-    
+
     return achievementList;
 }
 public void checkDamageAchievements(Player player) throws InterruptedException {
@@ -266,7 +266,7 @@ public void checkDamageAchievements(Player player) throws InterruptedException {
 
     // Få listen af damage achievements
     List<VagtAchievement> achievements = initializeDamageAchievements();
-    
+
     // Check hvert achievement
     for (VagtAchievement achievement : achievements) {
         checkSingleDamageAchievement(
@@ -280,7 +280,7 @@ public void checkDamageAchievements(Player player) throws InterruptedException {
 }
 private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int damage, int required, double bonusPercent) throws InterruptedException {
     String achievementProperty = "damage_achievement_" + required;
-    
+
     if (damage >= required && !profile.hasProperty(achievementProperty)) {
         profile.setProperty(achievementProperty, "true");
         profile.setProperty(achievementProperty + "_bonus", String.valueOf(bonusPercent));
@@ -292,13 +292,13 @@ private ItemStack createDamageAchievementItem(int currentDamage, PlayerProfile p
     HeadDatabaseAPI hdb = new HeadDatabaseAPI();
     ItemStack item;
     boolean completed = currentDamage >= achievement.requiredAmount;
-    
+
     if (completed && profile.hasProperty(achievement.property)) {
         item = hdb.getItemHead("21774");
     } else {
         item = hdb.getItemHead("9382");
     }
-    
+
     ItemMeta meta = item.getItemMeta();
     String color = completed ? "§a" : "§c";
     meta.setDisplayName(color + achievement.description);
@@ -323,8 +323,8 @@ private ItemStack createDamageAchievementItem(int currentDamage, PlayerProfile p
     item.setItemMeta(meta);
     return item;
 }
-} */
-package com.gmail.markushygedombrowski.achievements;
+}
+/* package com.gmail.markushygedombrowski.achievements;
 
 import com.gmail.markushygedombrowski.HLvagt;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
@@ -429,4 +429,4 @@ public class VagtAchievements {
     private interface AchievementModifier {
         double calculateModifier(int required);
     }
-}
+} */
