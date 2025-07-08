@@ -34,8 +34,8 @@ public class VagtLevelGUI implements Listener {
     private final int PREV_PAGE = 45;
 
     public void openVagtLevelGUI(Player p) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "§2Vagt Level side " + NEXT_PAGE);
-        playerPageNumbers.put(p.getUniqueId(), NEXT_PAGE);
+        Inventory inventory = Bukkit.createInventory(null, 54, "§2Vagt Level side 1");
+        playerPageNumbers.put(p.getUniqueId(), 1);  // Start på side 1 i stedet for 53
         inventory.setItem(NEXT_PAGE, createItem(p, Material.ARROW, "§aNæste side", null));
 
         for (int i = 9; i < 45; i++) {
