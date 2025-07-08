@@ -99,7 +99,7 @@ public class HLvagt extends JavaPlugin {
         achievementsGUI = new AchievementsGUI(this);
 
 
-        getServer().getPluginManager().registerEvents(new AchivementsListener(this), this);
+        getServer().getPluginManager().registerEvents(new AchivementsListener(this,playerProfiles), this);
 
 
         initWarps();
