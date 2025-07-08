@@ -87,8 +87,6 @@ public class MainMenu implements Listener {
                         if (VagtCooldown.isCooling(p.getName(), "lon")) {
                             VagtCooldown.coolDurMessage(p, "lon");
                             return;
-                        } else {
-                            plugin.getLon().giveLon(p);
                         }
                         // Opdater GUI'en efter handling
                         meta(p, plugin.getPlayerProfile(p.getUniqueId()), event.getInventory());

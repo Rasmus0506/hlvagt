@@ -131,7 +131,7 @@ public class HLvagt extends JavaPlugin {
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
-                vagtCooldown.hashCode();
+                vagtCooldown.handleCooldowns();
             }
         }, 1L, 1L);
 
@@ -150,12 +150,6 @@ public class HLvagt extends JavaPlugin {
 
         SellChestCommand sellChestCommand = new SellChestCommand(this, vagtChestManager);
         getCommand("sellchest").setExecutor(sellChestCommand);
-
-
-        // Tilføj automatisk gem hver 5. minut
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            VagtCooldown.saveCooldowns();
-        }, 6000L, 6000L); // 6000 ticks = 5 minutter
     }
 
 
@@ -267,7 +261,7 @@ public class HLvagt extends JavaPlugin {
     }
 
     public void onDisable() {
-        VagtCooldown.saveCooldowns();
+
     }
 
     public PlayerProfile getPlayerProfile(UUID uniqueId) {
