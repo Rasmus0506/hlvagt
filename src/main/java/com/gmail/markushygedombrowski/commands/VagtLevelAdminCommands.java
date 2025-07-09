@@ -70,6 +70,9 @@ public class VagtLevelAdminCommands implements CommandExecutor {
             case "vsetplaytime":
                 handleSetPlayTime(args, player);
                 break;
+            case "vgivelon":
+                handleGiveLon(args, player);
+                break;
             default:
                 player.sendMessage("§4Ugyldig kommando");
 
@@ -79,6 +82,24 @@ public class VagtLevelAdminCommands implements CommandExecutor {
         return true;
     }
 
+
+    private void handleGiveLon(String[] args, Player player) {
+        if (args.length < 1) {
+            player.sendMessage("§4Brug /vgivelon <spiller>");
+            return;
+        }
+
+        Player target = getPlayer(args[0], player);
+        if (target == null) return;
+
+        if (!target.hasPermission("vagt")) {
+            player.sendMessage("§4Spilleren er ikke vagt");
+            return;
+        }
+
+        // Assuming there's a method to give lon
+        HLvagt.getInstance().getLon().giveLon(target);
+    }
     private void handleSetPlayTime(String[] args, Player player) {
         if (args.length < 2) {
             player.sendMessage("§4Brug /vsetplaytime <spiller> <tid>");
