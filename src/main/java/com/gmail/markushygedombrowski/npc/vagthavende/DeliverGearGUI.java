@@ -62,7 +62,7 @@ public class DeliverGearGUI implements Listener {
             return;
         }
         PlayerProfile profile = playerProfiles.getPlayerProfile(p.getUniqueId());
-        profile.getDeliveredItems().incrementItem(clickeditem.getType());
+        profile.getDeliveredItems().incrementItem(clickeditem.getType(),1);
         event.setCancelled(true);
         event.setResult(Event.Result.DENY);
     }
@@ -70,7 +70,8 @@ public class DeliverGearGUI implements Listener {
     private boolean gear(Player p, ItemStack clickeditem) {
         if (deliverGear(p, clickeditem)) {
             PlayerProfile profile = playerProfiles.getPlayerProfile(p.getUniqueId());
-            profile.setXp(((Double) profile.getProperty("exp")).intValue() + itemProfileLoader.getItemProfile(clickeditem.getItemMeta().getDisplayName()).getExp());
+            profile.addExp(itemProfileLoader.getItemProfile(clickeditem.getItemMeta().getDisplayName()).getExp());
+
 
             return true;
         }

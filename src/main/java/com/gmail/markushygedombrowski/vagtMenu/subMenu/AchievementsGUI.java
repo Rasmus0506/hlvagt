@@ -27,7 +27,6 @@ public class AchievementsGUI implements Listener {
     private static final String MENU_TITLE = "§8Vagt Achievements";
     private static final String DEATH_MENU_TITLE = "§8Døds Achievements";
     private static final String KILL_MENU_TITLE = "§8Kills Achievements";
-    private static final String DAMAGE_MENU_TITLE = "§8Damage Achievements";
     private static final int INVENTORY_SIZE = 54;
     private static final int ITEMS_PER_PAGE = 36;
     private static final int BACK_BUTTON_SLOT = 45;
@@ -36,14 +35,12 @@ public class AchievementsGUI implements Listener {
     private final HLvagt plugin;
     private final List<VagtAchievement> deathAchievements;
     private final List<VagtAchievement> killsAchievements;
-    private final List<VagtAchievement> damageAchievements;
 
     public AchievementsGUI(HLvagt plugin) {
         if (plugin == null) throw new IllegalArgumentException("Plugin cannot be null");
         this.plugin = plugin;
         this.deathAchievements = initializeAchievements("death");
         this.killsAchievements = initializeAchievements("kill");
-        this.damageAchievements = initializeAchievements("damage");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
@@ -100,7 +97,6 @@ public class AchievementsGUI implements Listener {
             Inventory menu = Bukkit.createInventory(null, INVENTORY_SIZE, MENU_TITLE);
             menu.setItem(9, createMenuButton(player, Statistic.DEATHS, deathAchievements, "§c☠ Døds Achievements ☠"));
             menu.setItem(10, createMenuButton(player, Statistic.PLAYER_KILLS, killsAchievements, "§a☠ Kills Achievements ☠"));
-            menu.setItem(11, createMenuButton(player, "total_damage", damageAchievements, "§6⚔ Damage Achievements ⚔"));
             fillEmptySlots(menu);
             player.openInventory(menu);
         } catch (Exception e) {

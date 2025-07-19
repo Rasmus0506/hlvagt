@@ -240,39 +240,6 @@ public class MainMenu implements Listener {
 
     }
 
-    private ItemStack createDamageMenuButton(Player player) {
-        ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
-        ItemMeta meta = sword.getItemMeta();
-        meta.setDisplayName("§6⚔ Damage Achievements ⚔");
-
-        List<String> lore = new ArrayList<>();
-
-        double totalDamage = Math.abs(player.getStatistic(Statistic.DAMAGE_DEALT)) / 10.0;
-        lore.add("§7Total damage givet: §6" + String.format("%.1f", totalDamage) + " hjerter");
-        lore.add("");
-        lore.add("§7Achievements opnået:");
-
-        PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
-        int achieved = 0;
-        int total = 10;
-
-
-        for (int i = 5; i <= 140; i += 15) {
-            String achievementKey = "achievement_damage_" + i;
-            if (profile != null && profile.hasProperty(achievementKey)) {
-                achieved++;
-            }
-        }
-
-        lore.add("§7" + achieved + "§8/§7" + total);
-        lore.add("");
-        lore.add("§eKlik for at se alle achievements");
-
-        meta.setLore(lore);
-        sword.setItemMeta(meta);
-        return sword;
-    }
-
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
         String title = event.getView().getTitle();

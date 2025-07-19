@@ -1,5 +1,6 @@
 package com.gmail.markushygedombrowski.npc.vagthavende;
 
+import com.gmail.markushygedombrowski.achievements.AchievementUpdater;
 import com.gmail.markushygedombrowski.deliveredItems.ItemProfileLoader;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
@@ -28,10 +29,12 @@ public class VagthavendeOfficer implements Listener {
     private ItemProfileLoader itemProfileLoader;
     private PlayerProfiles playerProfiles;
 
+
     public VagthavendeOfficer(DeliverGearGUI deliverGearGUI, ItemProfileLoader itemProfileLoader, PlayerProfiles playerProfiles) {
         this.deliverGearGUI = deliverGearGUI;
         this.itemProfileLoader = itemProfileLoader;
         this.playerProfiles = playerProfiles;
+
     }
 
     public void create(Player player) {
@@ -90,6 +93,7 @@ public class VagthavendeOfficer implements Listener {
                 p.sendMessage("§ckunne ikke finde din profil");
                 return;
             }
+
             switch (clickedSlot) {
                 case SHARDS_INDEX:
                     int amount = deliverItem(p, clickeditem);
@@ -97,7 +101,7 @@ public class VagthavendeOfficer implements Listener {
                        p.sendMessage("§7Du har ikke §9§lShards §7i dit inventory");
                        break;
                    }
-                   profile.getDeliveredItems().setShards(profile.getDeliveredItems().getShards() + amount);
+
                     break;
                 case GEAR_INDEX:
                     deliverGearGUI.create(p);
@@ -108,7 +112,6 @@ public class VagthavendeOfficer implements Listener {
                         p.sendMessage("§7Du har ikke §e§lBread §7i dit inventory");
                         break;
                     }
-                    profile.getDeliveredItems().setBread(profile.getDeliveredItems().getBread() + amount);
                     break;
                 case BLAZERODS_INDEX:
                     amount = deliverItem(p, clickeditem);
@@ -116,7 +119,6 @@ public class VagthavendeOfficer implements Listener {
                         p.sendMessage("§7Du har ikke §c§lBlazeRods §7i dit inventory");
                         break;
                     }
-                    profile.getDeliveredItems().setBlazeRods(profile.getDeliveredItems().getBlazeRods() + amount);
                     break;
             }
             event.setCancelled(true);
@@ -137,15 +139,23 @@ public class VagthavendeOfficer implements Listener {
                 if (itemStack.getType() == item.getType()) {
                     amount += itemStack.getAmount();
                     exp += itemProfileLoader.getItemProfile(item.getItemMeta().getDisplayName()).getExp() * itemStack.getAmount();
-
                     p.getInventory().remove(itemStack);
                 }
 
             }
+            if (amount == 0) {
+                p.sendMessage("§7Du har ikke §c§lBlazeRods §7i dit inventory");
+                return 0;
+            }
             p.sendMessage("§7Du har afleveret §a" + amount + " " + item.getItemMeta().getDisplayName());
             p.sendMessage("§7Du har fået §b" + exp + "§3 exp");
-            profile.setXp((double)profile.getProperty("exp") + exp);
-
+            profile.addExp(exp);
+            profile.getDeliveredItems().incrementItem(item.getType(), amount);
+            try {
+                playerProfiles.save(profile);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             return amount;
         }
 

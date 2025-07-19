@@ -30,7 +30,6 @@ public class AchivementsListener implements Listener {
         try {
             handleDeathAchievements(player);
             handleKillAchievements(player);
-            handleDamageAchievements(player);
         } catch (InterruptedException e) {
             plugin.getLogger().warning("Fejl ved checking af achievement ved join: " + e.getMessage());
             e.printStackTrace();
@@ -49,31 +48,9 @@ public class AchivementsListener implements Listener {
             
             if (killer != null && killer.hasPermission("vagt")) {
                 handleKillAchievements(killer);
-                handleDamageAchievements(killer);
             }
         } catch (InterruptedException e) {
             plugin.getLogger().warning("Fejl ved checking af achievement: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    @EventHandler
-    public void onPlayerDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) return;
-        
-        Player damager = (Player) event.getDamager();
-        if (!damager.hasPermission("vagt")) return;
-        
-        double damage = event.getFinalDamage();
-        
-        PlayerProfile profile = plugin.getPlayerProfile(damager.getUniqueId());
-        int currentDamage = profile.castPropertyToInt(profile.getProperty("damage_dealt"));
-        profile.setProperty("damage_dealt", String.valueOf(currentDamage + (int)damage));
-        
-        try {
-            handleDamageAchievements(damager);
-        } catch (InterruptedException e) {
-            plugin.getLogger().warning("Fejl ved damage achievement check: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -105,6 +82,7 @@ private void handleDeathAchievements(Player player) throws InterruptedException 
             checkSingleDeathAchievement(player, profile, deaths, i, penalty);
         }
     }
+
 
     private void handleKillAchievements(Player player) throws InterruptedException {
         PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
@@ -177,41 +155,7 @@ private void checkSingleKillAchievement(Player p, PlayerProfile profile, int kil
     }
 }
 
-private void handleDamageAchievements(Player player) throws InterruptedException {
-    PlayerProfile profile = plugin.getPlayerProfile(player.getUniqueId());
-    // Konvertér damage til positive tal og del med 10 for at få hjerter
-    int damage = Math.abs(player.getStatistic(Statistic.DAMAGE_DEALT)) / 10;
 
-    checkSingleDamageAchievement(player, profile, damage, 5, 0.001);
 
-    double previousBonus = 0.001;
-    int previousDamage = 5;
-    
-    // Stigende damage med 15 og bonus med 2x
-    for (int i = 1; i <= 10; i++) {
-        int requiredDamage = previousDamage + 15;
-        double bonus = previousBonus * 2;
-        
-        checkSingleDamageAchievement(player, profile, damage, requiredDamage, bonus);
-        
-        previousDamage = requiredDamage;
-        previousBonus = bonus;
-    }
-}
 
-private void checkSingleDamageAchievement(Player p, PlayerProfile profile, int damage, int required, double bonusPercent) throws InterruptedException {
-    String achievementKey = "achievement_damage_" + required;
-    if (damage >= required && !profile.hasProperty(achievementKey)) {
-        profile.setProperty(achievementKey, true);
-        profile.setProperty(achievementKey + "_bonus", String.valueOf(bonusPercent));
-        try {
-            playerProfiles.save(profile);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        
-        p.sendMessage("§6⚔ Achievement opnået: §7Giv " + required + " damage");
-        p.sendMessage("§7Du har fået en bonus på §a+" + String.format("%.3f", bonusPercent) + "% §7til din løn");
-    }
-}
 }

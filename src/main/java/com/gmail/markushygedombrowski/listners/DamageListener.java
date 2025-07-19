@@ -274,31 +274,6 @@ public class DamageListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) {
-            return;
-        }
-        Player damager = (Player) event.getDamager();
-        double damage = event.getFinalDamage();
-        
-        PlayerProfile profile = plugin.getPlayerProfile(damager.getUniqueId());
-        if (!profile.hasProperty("total_damage")) {
-            profile.setProperty("total_damage", "0");
-        }
-        
-        // Brug castPropertyToInt i stedet for Integer.parseInt
-        int currentDamage = profile.castPropertyToInt(profile.getProperty("total_damage"));
-        profile.setProperty("total_damage", String.valueOf(currentDamage + (int)damage));
-        
-        try {
-            // checkDamageAchievements i stedet for checkDamageAchievement
-            plugin.getVagtAchievements().checkDamageAchievements(damager);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 
 

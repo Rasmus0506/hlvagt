@@ -52,6 +52,10 @@ public class OnJoin implements Listener {
             int buff = 0;
             profile.setProperty("buff", buff);
         }
+        if(profile.getProperty("expmultiplier") == null) {
+            profile.setProperty("expmultiplier", 1.0);
+        }
+
         levelRewards.updatePlayerLevel(p, profile);
         addPlayerToCooldown(p);
         int level = VagtUtils.castPropertyToInt(profile.getProperty("level"));
@@ -61,6 +65,7 @@ public class OnJoin implements Listener {
         Bukkit.getPluginManager().callEvent(levelUpEvent);
 
     }
+
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event) {
