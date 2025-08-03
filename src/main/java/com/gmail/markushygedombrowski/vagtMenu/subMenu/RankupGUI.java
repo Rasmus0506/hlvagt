@@ -41,7 +41,7 @@ public class RankupGUI implements Listener {
         PlayerProfile profile = playerProfiles.getPlayerProfile(p.getUniqueId());
         RankupKrav rankupKrav;
         rankupMeta.setDisplayName("§a§lRankup");
-        if (p.hasPermission("a-vagt")) {
+        if (p.hasPermission("fullRankup")) {
             lore.add(0, "§c§lDu kan §4§lIkke §c§lRankup");
         } else {
             rankupKrav = rankupLoader.getRankupKrav(p.hasPermission("b-vagt") ? "a-vagt" : "b-vagt");

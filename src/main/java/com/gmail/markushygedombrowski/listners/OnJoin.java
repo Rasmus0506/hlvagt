@@ -81,7 +81,9 @@ public class OnJoin implements Listener {
         if (VagtCooldown.isCooling(p.getName(), "lon")) {
             return;
         }
-        setCooldownTime(p);
+        if(!playerCooldownTime.containsKey(p.getUniqueId())) {
+            setCooldownTime(p);
+        }
 
         VagtCooldown.add(p.getName(), "lon", playerCooldownTime.get(p.getUniqueId()), System.currentTimeMillis());
     }

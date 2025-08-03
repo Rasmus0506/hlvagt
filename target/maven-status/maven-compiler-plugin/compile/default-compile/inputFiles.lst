@@ -1,5 +1,4 @@
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\abilities\GlowNearbyPlayers.java
-C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\achievements\VagtAchievements.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\adminGUIs\VagtStats.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\buff\AktivBuffCmd.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\buff\BuffGui.java
@@ -17,7 +16,7 @@ C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\cooldown\VagtAbilityCooldown.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\cooldown\VagtCooldown.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\HLvagt.java
-C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\listners\AchivementsListener.java
+C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\listners\AchievementListener.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\listners\DamageListener.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\listners\DropItemListener.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\listners\OnJoin.java
@@ -37,7 +36,8 @@ C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\utils\LuckPermsHelpers.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\utils\VagtUtils.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\vagtMenu\MainMenu.java
-C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\vagtMenu\subMenu\AchievementsGUI.java
+C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\vagtMenu\subMenu\achievementGUIS\AchievementGUI.java
+C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\vagtMenu\subMenu\achievementGUIS\SubAchievementGUI.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\vagtMenu\subMenu\Lon.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\vagtMenu\subMenu\PVGUI.java
 C:\Users\marku\IdeaProjects\hlvagt\src\main\java\com\gmail\markushygedombrowski\vagtMenu\subMenu\RankupGUI.java

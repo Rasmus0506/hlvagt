@@ -20,9 +20,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class VagtLevelAdminCommands implements CommandExecutor {
     private final PlayerProfiles playerProfiles;
-
-    public VagtLevelAdminCommands(PlayerProfiles playerProfiles) {
+    private final HLvagt plugin;
+    public VagtLevelAdminCommands(PlayerProfiles playerProfiles, HLvagt plugin) {
         this.playerProfiles = playerProfiles;
+        this.plugin = plugin;
     }
 
     @Override
@@ -40,6 +41,21 @@ public class VagtLevelAdminCommands implements CommandExecutor {
         Player player = (Player) sender;
 
         switch (alias.toLowerCase()) {
+            case "vhelp":
+                player.sendMessage("§aVagt Admin Commands:");
+                player.sendMessage("§a/vaddexp <spiller> <exp> - Tilføj exp til en spiller");
+                player.sendMessage("§a/vaddlevel <spiller> <level> - Tilføj level til en spiller");
+                player.sendMessage("§a/vlevel <spiller> <level> - Sæt level for en spiller");
+                player.sendMessage("§a/vexp <spiller> <exp> - Sæt exp for en spiller");
+                player.sendMessage("§a/vreset <spiller> - Nulstil en spillers level og exp");
+                player.sendMessage("§a/showstats <spiller> - Vis stats for en spiller");
+                player.sendMessage("§a/vbufflevel <spiller> <level> - Sæt buff level for en spiller");
+                player.sendMessage("§a/vconfirmresetall - Nulstil alle spilleres level og exp");
+                player.sendMessage("§a/vsetvagtpost <spiller> <antal> - Sæt antal vagtposter for en spiller");
+                player.sendMessage("§a/vsetplaytime <spiller> <tid> - Sæt spilletid for en spiller");
+                player.sendMessage("§a/vgivelon <spiller> - Giv lon til en spiller");
+                player.sendMessage("§a/vreload - Genindlæs pluginet");
+                break;
             case "vaddexp":
                 handleAddExp(args, player);
                 break;
@@ -72,6 +88,10 @@ public class VagtLevelAdminCommands implements CommandExecutor {
                 break;
             case "vgivelon":
                 handleGiveLon(args, player);
+                break;
+            case "vreload":
+                plugin.reload();
+                player.sendMessage("§aPluginet er genindlæst");
                 break;
             default:
                 player.sendMessage("§4Ugyldig kommando");

@@ -38,8 +38,8 @@ public class Lon {
                 return;
             }
 
-            double penaltyPercent = plugin.getVagtAchievements().calculateTotalSalaryPenalty(profile);
-            double bonusPercent = plugin.getVagtAchievements().calculateTotalSalaryBonus(profile);
+            double penaltyPercent = profile.getAchievementTypeModifier("penalty");
+            double bonusPercent = profile.getAchievementTypeModifier("bonus");
 
             double finalLon = basisLon * (1 - (penaltyPercent / 100.0)) * (1 + (bonusPercent / 100.0));
             plugin.econ.depositPlayer(p, finalLon);

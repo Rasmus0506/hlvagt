@@ -5,6 +5,7 @@ import com.gmail.markushygedombrowski.cooldown.VagtCooldown;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfile;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.*;
+import com.gmail.markushygedombrowski.vagtMenu.subMenu.achievementGUIS.AchievementGUI;
 import com.gmail.markushygedombrowski.vagtMenu.subMenu.topVagter.TopVagterGUI;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Bukkit;
@@ -27,8 +28,8 @@ import java.util.List;
 
 
 public class MainMenu implements Listener {
-    private HLvagt plugin;
-    private PVGUI pvgui;
+    private final HLvagt plugin;
+    private final PVGUI pvgui;
     private TopVagterGUI topVagterGUI;
     private final int SPILTID_INDEX = 11;
     private final int STATS_INDEX = 13;
@@ -39,15 +40,16 @@ public class MainMenu implements Listener {
     private final int VAGTLVL_INDEX = 47;
     private final int L0N_INDEX = 15;
     private final int SETTINGS_INDEX = 51;
-    private HeadDatabaseAPI api = new HeadDatabaseAPI();
-    private PlayerProfiles playerProfiles;
-    private StatsGUI statsGUI;
-    private RankupGUI rankupGUI;
-    private VagtLevelGUI vagtLevelGUI;
-    private AchievementsGUI achievementsGUI;
+    private final HeadDatabaseAPI api = new HeadDatabaseAPI();
+    private final PlayerProfiles playerProfiles;
+    private final StatsGUI statsGUI;
+    private final RankupGUI rankupGUI;
+    private final VagtLevelGUI vagtLevelGUI;
+    private final AchievementGUI achievementGUI;
+
 
     public MainMenu(HLvagt plugin, PVGUI pvgui, TopVagterGUI topVagterGUI, PlayerProfiles playerProfiles,
-                    StatsGUI statsGUI, RankupGUI rankupGUI, VagtLevelGUI vagtLevelGUI, AchievementsGUI achievementsGUI) {
+                    StatsGUI statsGUI, RankupGUI rankupGUI, VagtLevelGUI vagtLevelGUI, AchievementGUI achievementGUI) {
         this.plugin = plugin;
         this.pvgui = pvgui;
         this.topVagterGUI = topVagterGUI;
@@ -55,7 +57,8 @@ public class MainMenu implements Listener {
         this.statsGUI = statsGUI;
         this.rankupGUI = rankupGUI;
         this.vagtLevelGUI = vagtLevelGUI;
-        this.achievementsGUI = achievementsGUI; // KORREKT - brug parameteren
+
+        this.achievementGUI = achievementGUI;
     }
 
     public void create(Player p, PlayerProfile profile) {
@@ -69,7 +72,7 @@ public class MainMenu implements Listener {
 
     @EventHandler
     public void onClickEvent(InventoryClickEvent event) {
-        try {
+       // try {
             if (!(event.getWhoClicked() instanceof Player)) {
                 return;
             }
@@ -101,7 +104,11 @@ public class MainMenu implements Listener {
                         topVagterGUI.create(p);
                         break;
                     case ACHIVEMENT_INDEX:
-                        achievementsGUI.openMenu(p);
+                        if(achievementGUI == null) {
+                            p.sendMessage(ChatColor.RED + "Achievement GUI is not initialized.");
+                            return;
+                        }
+                        achievementGUI.create(p);
                         break;
                     case RANKUP_INDEX:
                         rankupGUI.create(p);
@@ -111,9 +118,10 @@ public class MainMenu implements Listener {
                         break;
                 }
             }
-        } catch (NullPointerException e) {
-            plugin.getLogger().warning("NullPointerException i MainMenu.onClickEvent: " + e.getMessage());
-        }
+        //} catch (NullPointerException e) {
+        //    plugin.getLogger().warning("NullPointerException i MainMenu.onClickEvent: " + e.getMessage());
+       //     plugin.getLogger().warning("Stacktrace: " + e.getStackTrace());
+       // }
     }
 
     public void meta(Player p, PlayerProfile profile, Inventory inventory) {
@@ -183,27 +191,23 @@ public class MainMenu implements Listener {
 
         List<String> lonLore = new ArrayList<>();
         double basisLon = profile.castPropertyToInt(profile.getProperty("salary"));
-        double penaltyPercent = plugin.getVagtAchievements().calculateTotalSalaryPenalty(profile);
-        double bonusPercent = plugin.getVagtAchievements().calculateTotalSalaryBonus(profile);
+        double penaltyPercent = profile.getAchievementTypeModifier("penalty");
+        double bonusPercent = profile.getAchievementTypeModifier("bonus");
         double netPercent = bonusPercent - penaltyPercent;
         double finalLon = basisLon * (1 + (netPercent / 100.0));
 
         lonLore.add("§7Din §2basis-løn: §a$" + basisLon);
 
         if (penaltyPercent > 0) {
-            lonLore.add("§cStraf fra døds-achievements: -" + String.format("%.2f", penaltyPercent) + "%");
+            lonLore.add("§cStraf fra achievements: -" + String.format("%.2f", penaltyPercent) + "%");
         }
         if (bonusPercent > 0) {
-            lonLore.add("§aBonus fra kill-achievements: +" + String.format("%.2f", bonusPercent) + "%");
+            lonLore.add("§aBonus fra achievements: +" + String.format("%.2f", bonusPercent) + "%");
         }
         if (netPercent != 0) {
             String netPercentPrefix = netPercent > 0 ? "§a+" : "§c";
             lonLore.add("§7Samlet bonus/straf: " + netPercentPrefix + String.format("%.2f", netPercent) + "%");
             lonLore.add("§7Samlet §2løn: §a$" + String.format("%.2f", finalLon));
-        }
-
-        if (VagtCooldown.isCooling(p.getName(), "lon")) {
-
         }
 
 

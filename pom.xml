@@ -17,13 +17,12 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
-
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>sk89q-repo</id>
@@ -96,7 +95,7 @@
         <dependency>
             <groupId>com.github.markus6890</groupId>
             <artifactId>VagtProfiler</artifactId>
-            <version>2924bc3c52</version>
+            <version>e741a7177f</version>
         </dependency>
         <dependency>
             <groupId>com.github.mewin</groupId>

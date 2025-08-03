@@ -13,7 +13,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -253,6 +255,47 @@ public class VagtUtils {
             return  (((Double) key).intValue());
         }
         return (int) key;
+    }
+    public void fillEmptySlots(Inventory inventory) {
+        Random random = new Random();
+        ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) random.nextInt(15));
+        glass.getItemMeta().setDisplayName(" ");
+        for (ItemStack item : inventory.getContents()) {
+            if (item == null) {
+                inventory.setItem(inventory.firstEmpty(), glass);
+            }
+        }
+    }
+
+    public ItemStack getCloseButton() {
+        ItemStack closeButton = new ItemStack(Material.BARRIER);
+        ItemMeta meta = closeButton.getItemMeta();
+        meta.setDisplayName("§c§lClose");
+        List<String> lore = new ArrayList<>();
+        lore.add("§7Click to close the menu.");
+        meta.setLore(lore);
+        closeButton.setItemMeta(meta);
+        return closeButton;
+    }
+    public ItemStack getBackButton() {
+        ItemStack backButton = new ItemStack(Material.ARROW);
+        ItemMeta meta = backButton.getItemMeta();
+        meta.setDisplayName("§e§lBack");
+        List<String> lore = new ArrayList<>();
+        lore.add("§7Click to go back to the previous menu.");
+        meta.setLore(lore);
+        backButton.setItemMeta(meta);
+        return backButton;
+    }
+    public ItemStack getNextButton() {
+        ItemStack nextButton = new ItemStack(Material.ARROW);
+        ItemMeta meta = nextButton.getItemMeta();
+        meta.setDisplayName("§a§lNext Page");
+        List<String> lore = new ArrayList<>();
+        lore.add("§7Click to go to the next page.");
+        meta.setLore(lore);
+        nextButton.setItemMeta(meta);
+        return nextButton;
     }
 }
 
