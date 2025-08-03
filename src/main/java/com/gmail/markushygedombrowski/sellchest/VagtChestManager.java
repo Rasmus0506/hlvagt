@@ -133,18 +133,17 @@ public class VagtChestManager implements Listener {
         double totalMoney = 0;
         Map<String, Integer> soldItems = new HashMap<>();
 
-        player.sendMessage("§7Debug: Starter processering af items...");
+
 
         for (ItemStack item : inv.getContents()) {
             if (item == null || item.getType() == Material.AIR) continue;
 
             int id = item.getTypeId();
             // Tilføj mere detaljeret debugging her
-            player.sendMessage("§7Debug: Tjekker item: " + item.getType().name());
-            player.sendMessage("§7Debug: Item data: ID=" + id + ", Durability=" + item.getDurability());
+
             double price = priceManager.getPrice(id);
 
-            player.sendMessage("§7Debug: Fundet pris: " + price);
+
 
             int amount = item.getAmount();
             if (price > 0) {
@@ -152,16 +151,16 @@ public class VagtChestManager implements Listener {
                 totalMoney += itemTotal;
                 String itemName = item.getType().name().replace("_", " ").toLowerCase();
                 soldItems.put(itemName, soldItems.getOrDefault(itemName, 0) + amount);
-                player.sendMessage("§7Debug: Tilføjet til total: " + itemTotal + " (nu " + totalMoney + ")");
+
             } else {
-                player.sendMessage("§7Debug: Item ignoreret - ingen pris sat for ID " + id);
+
             }
         }
 
         inv.clear();
 
 
-        player.sendMessage("§7Debug: Forsøger at vise besked med total: " + totalMoney);
+
         try {
             if (totalMoney > 0) {
                 economy.depositPlayer(player, totalMoney);

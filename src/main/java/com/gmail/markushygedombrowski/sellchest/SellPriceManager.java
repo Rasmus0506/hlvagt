@@ -17,33 +17,24 @@ public class SellPriceManager {
 
     public SellPriceManager(File dataFolder) {
         this.configFile = new File(dataFolder, "sellprices.yml");
-        System.out.println("Debug: SellPriceManager konstruktør - Config fil placering: " + configFile.getAbsolutePath());
         this.config = YamlConfiguration.loadConfiguration(configFile);
         loadPrices();
     }
 
     private void loadPrices() {
-        System.out.println("Debug: loadPrices starter...");
         setupDefaultPrices(); // Altid indlæs standard priser først
 
         if (config.contains("prices")) {
-            System.out.println("Debug: Indlæser priser fra config...");
             for (String key : config.getConfigurationSection("prices").getKeys(false)) {
                 try {
                     int id = Integer.parseInt(key);
                     double price = config.getDouble("prices." + key);
                     sellPrices.put(id, price);
-                    System.out.println("Debug: Indlæst fra config - ID: " + id + ", Pris: " + price);
                 } catch (NumberFormatException e) {
-                    System.out.println("Debug: Fejl ved parsing af ID: " + key);
                 }
             }
         }
 
-        System.out.println("Debug: Antal priser indlæst: " + sellPrices.size());
-        // Test nogle specifikke items
-        System.out.println("Debug: Pris for STONE (1): " + sellPrices.get(1));
-        System.out.println("Debug: Pris for BREAD (297): " + sellPrices.get(297));
     }
 
     private void setupDefaultPrices() {
@@ -75,6 +66,7 @@ public class SellPriceManager {
         sellPrices.put(57, 1000.0);   // DIAMOND_BLOCK
         sellPrices.put(263, 40.0);   // COAL
         sellPrices.put(173, 360.0);   // COAL_BLOCK
+        sellPrices.put(170, 2550.0);   // HAY_BLOCK
 
         // Redstone og mekanismer
         sellPrices.put(61, 8.0);      // FURNACE
@@ -132,7 +124,6 @@ public class SellPriceManager {
         sellPrices.put(334, 3.0);   // LEATHER
 
         savePrices();
-        System.out.println("Debug: Standard priser sat op");
     }
 
     private void savePrices() {
@@ -141,23 +132,19 @@ public class SellPriceManager {
         }
         try {
             config.save(configFile);
-            System.out.println("Debug: Priser gemt succesfuldt");
         } catch (IOException e) {
-            System.out.println("Debug: Fejl ved gemning af priser: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public double getPrice(int id) {
         Double price = sellPrices.get(id);
-        System.out.println("Debug: Forespørgsel på pris - ID: " + id + ", Fundet pris: " + price);
         return price != null ? price : 0.0;
     }
 
     public void setPrice(int id, double price) {
         sellPrices.put(id, price);
         savePrices();
-        System.out.println("Debug: Ny pris sat - ID: " + id + ", Pris: " + price);
     }
 
     public void printAllPrices(Player player) {
