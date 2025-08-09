@@ -1,10 +1,11 @@
 package com.gmail.markushygedombrowski.warp;
 
 
+import com.gmail.markushygedombrowski.HLUtils;
 import com.gmail.markushygedombrowski.inventory.ChangeInvOnWarp;
 import com.gmail.markushygedombrowski.inventory.InvHolder;
 import com.gmail.markushygedombrowski.playerProfiles.PlayerProfiles;
-import com.gmail.markushygedombrowski.utils.VagtUtils;
+import com.gmail.markushygedombrowski.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -136,17 +137,12 @@ public class VagtWarpGUI implements Listener {
     }
 
     private void warpPlayer(Player p, String warpName, String message) {
+        ListHolder listHolder = HLUtils.getInstance().getListHolder();
         p.sendMessage(message);
-        VagtSpawnInfo spawnInfo = vagtSpawnManager.getWarpInfo(warpName);
-        if (spawnInfo != null) {
-            p.teleport(spawnInfo.getLocation());
-            InvHolder invHolder = changeInvOnWarp.getInventory(p.getUniqueId(), warpName);
-            if (invHolder != null) {
-                p.getInventory().setContents(invHolder.getInventory());
-                p.getInventory().setArmorContents(invHolder.getGear());
-                p.sendMessage("Du har skiftet gear");
-                return;
-            }
-        }
+        listHolder.remove(Category.valueOf(Utils.getRegion(p.getLocation())), Role.VAGT, p.getName());
+        p.teleport(vagtSpawnManager.getWarpInfo(warpName).getLocation());
+        listHolder.add(Category.valueOf(Utils.getRegion(p.getLocation())), Role.VAGT, p.getName());
+
+
     }
 }

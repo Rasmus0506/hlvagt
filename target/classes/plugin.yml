@@ -22,7 +22,7 @@ commands:
   guitest:
     description: "test gui"
   vresetall:
-    aliases: [ "vconfirmresetall", "vreset", "vsetexp", "vsetlevel","vbufflevel","vaddexp","vaddlevel","vsetvagtpost","vlevel", "vsetplaytime", "vgivelon", "vreload", "vhelp" ]
+    aliases: [ "vconfirmresetall", "vreset", "vsetexp", "vsetlevel","vbufflevel","vaddexp","vaddlevel","vsetvagtpost","vlevel", "vsetplaytime", "vgivelon", "vreload","vhelp" ]
     description: "resetter alle vagter"
   panikrum:
     description: "panikrum"

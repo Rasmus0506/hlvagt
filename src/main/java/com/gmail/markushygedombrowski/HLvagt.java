@@ -68,6 +68,7 @@ public class HLvagt extends JavaPlugin {
     private VagtUtils vagtUtils;
     private SimpleAchievementManager simpleAchievementManager;
     private  ItemProfileLoader itemProfileLoader;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -261,6 +262,8 @@ public class HLvagt extends JavaPlugin {
         OnJoin onJoin = new OnJoin(playerProfiles, settings, levelRewards);
         Bukkit.getPluginManager().registerEvents(onJoin, this);
 
+
+
         DamageListener damageListener = new DamageListener(settings, vagtSpawnManager, playerProfiles, this, combatList, vagtFangePvpConfigManager, logger, luckPerms, changeInvOnWarp);
         Bukkit.getPluginManager().registerEvents(damageListener, this);
 
@@ -278,6 +281,7 @@ public class HLvagt extends JavaPlugin {
     }
 
     public void onDisable() {
+
 
     }
 

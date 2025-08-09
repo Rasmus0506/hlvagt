@@ -25,7 +25,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.sql.SQLException;
@@ -45,6 +44,7 @@ public class DamageListener implements Listener {
     private LuckPerms luckPerms;
     private final ChangeInvOnWarp changeInvOnWarp;
 
+
     public DamageListener(Settings settings, VagtSpawnManager vagtSpawnManager, PlayerProfiles profiles, HLvagt plugin, CombatList combatList, VagtFangePvpConfigManager vFPvpConfig, Logger logger, LuckPerms luckPerms, ChangeInvOnWarp changeInvOnWarp) {
         this.settings = settings;
         this.vagtSpawnManager = vagtSpawnManager;
@@ -55,6 +55,7 @@ public class DamageListener implements Listener {
         this.logger = logger;
         this.luckPerms = luckPerms;
         this.changeInvOnWarp = changeInvOnWarp;
+
     }
 
     @EventHandler
@@ -273,6 +274,7 @@ public class DamageListener implements Listener {
             event.setDamage(1);
         }
     }
+
 
 
 

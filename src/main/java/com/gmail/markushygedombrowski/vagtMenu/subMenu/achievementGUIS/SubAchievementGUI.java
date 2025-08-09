@@ -73,8 +73,9 @@ public class SubAchievementGUI implements Listener {
     }
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getCurrentItem() == null) return;
         if (event.getClickedInventory().getTitle().contains("§a§lAchievement: ")) {
-            if (event.getCurrentItem() == null) return;
+
             event.setCancelled(true);
             event.setResult(InventoryClickEvent.Result.DENY);
 

@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.github.markus6890</groupId>
             <artifactId>HLUtils</artifactId>
-            <version>c6f2d4a451</version>
+            <version>3ef28681db</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
